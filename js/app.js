@@ -49,8 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log(laser)
     setInterval(function() {
       const s = 10
-      const movement = laser.offsetTop
-      laser.style.top = (movement - s) + 'px'
+      const distToTop = laser.offsetTop
+      laser.style.top = (distToTop - s) + 'px'
+      if (laser.offsetTop < 0) {
+        laser.style.display = 'none'
+      }
     }, 10)
   }
 
