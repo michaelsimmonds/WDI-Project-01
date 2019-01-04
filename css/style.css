@@ -9,6 +9,7 @@ h1 {
   margin: auto;
   position: relative;
   display: flex;
+  justify-content: space-evenly;
 }
 
 .player {
@@ -25,6 +26,15 @@ h1 {
   height: 30px;
   background-color: green;
   position: absolute;
+}
+
+.alien {
+  width: 50px;
+  height: 50px;
+  margin: 20px;
+  background-color: black;
+  display: flex;
+
 }
 
 /*# sourceMappingURL=style.css.map */
