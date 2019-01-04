@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   const player = document.querySelector('.player')
-  player.left = 550
+  player.left = 525
   player.top = 600
 
   const lasers = []
   const aliens = []
-  console.log(lasers)
+  let alienNum = 9
 
   document.onkeydown = function(e) {
     if (e.keyCode === 37) {
@@ -21,6 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('fire')
       createLaser()
     }
+  }
+
+  //Creates Aliens
+  for (let i = 0; i < alienNum; i++) {
+    const alienDiv = document.createElement('div')
+    alienDiv.className = 'alien'
+    document.querySelector('.gamespace').appendChild(alienDiv)
   }
 
   // Move the player left and right //
@@ -38,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Creates and shoots laser from player
   function createLaser() {
     const laser = document.createElement('div')
     const gamespace = document.querySelector('.gamespace')
@@ -57,12 +65,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 10)
   }
 
-  // function moveLaser() {
-  //   for (let i = 0; i <= lasers.length; i++) {
-  //     lasers[i].top += 5
-  //   }
+  // NONE OF THE BELOW IS WORKING CODE
+  // Enemy movement
+  // function moveAlien() {
+  //   const alienRow = document.querySelectorAll('.alien')
+  //   console.log(alienRow)
+  //   setInterval(function() {
+  //     const s = 10
+  //     const distToSide = alienRow.offsetTop
+  //     console.log('work')
+  //     alienRow.style.topLeft = (distToSide + s) + 'px'
+  //   }, 1000)
   // }
-  // moveLaser()
+  // moveAlien()
+
+  //
+  // //  Collision
+  // function isCollide(a, b) {
+  //   return !(
+  //     ((a.y + a.height) < (b.y)) ||
+  //         (a.y > (b.y + b.height)) ||
+  //         ((a.x + a.width) < b.x) ||
+  //         (a.x > (b.x + b.width))
+  //   )
+  // }
+  // isCollide(laser, alien)
   //
   // function gameLoop() {
   //   setTimeout(gameLoop, 1000)
@@ -72,16 +99,4 @@ document.addEventListener('DOMContentLoaded', () => {
   // }
   // gameLoop()
 
-
-  // TRIED TO CREATE ALIEN USING JAVASCRIPT BUT COULDN'T WORK OUT HOW TO DO MORE THAN ONE
-  // function createAlien() {
-  //   const div = document.createElement('div')
-  //   const gamespace = document.querySelector('.gamespace')
-  //   const alien = gamespace.appendChild(div)
-  //   alien.className = 'alien'
-  //   aliens.push(alien)
-  //   alien.style.left += 60 + 'px'
-  //   alien.style.top += 60 + 'px'
-  //   console.log(aliens)
-  // }
 })
