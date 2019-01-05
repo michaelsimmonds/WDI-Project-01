@@ -9,8 +9,8 @@ h1 {
   margin: auto;
   position: relative;
   display: flex;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
+  /* justify-content: space-evenly;
+  flex-wrap: wrap; */
 }
 
 .player {
@@ -34,6 +34,7 @@ h1 {
   height: 50px;
   margin: 20px;
   background-color: black;
+  position: absolute;
 }
 
 /*# sourceMappingURL=style.css.map */
