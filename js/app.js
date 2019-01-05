@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const lasers = []
   const aliens = []
-  let alienNum = 9
+  const alienNum = 9
 
   document.onkeydown = function(e) {
     if (e.keyCode === 37) {
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
       movePlayer()
     } else if (e.keyCode === 32) {
       console.log('fire')
-      createLaser()
+      playerLaser()
     }
   }
 
@@ -28,7 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const alienDiv = document.createElement('div')
     alienDiv.className = 'alien'
     document.querySelector('.gamespace').appendChild(alienDiv)
+    aliens.push(alienDiv)
   }
+  console.log(aliens)
 
   // Move the player left and right //
   function movePlayer() {
@@ -46,14 +48,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Creates and shoots laser from player
-  function createLaser() {
+  function playerLaser() {
     const laser = document.createElement('div')
     const gamespace = document.querySelector('.gamespace')
     gamespace.appendChild(laser)
     laser.className = 'laser'
     laser.style.left = player.left + 20 + 'px'
     laser.style.top = player.top - 30 + 'px'
-    lasers.push(laser)
+    lasers.push(laser) // dont think i need this
     console.log(laser)
     setInterval(function() {
       const s = 10
@@ -64,6 +66,45 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, 10)
   }
+
+  // Get aliens to randomly shoot
+  // loop through every alien and get them to shoot in a ten second window
+  // set this is a set interval function called on a random number
+  function alienLaser() {
+    const laser = document.createElement('div')
+    const gamespace = document.querySelector('.gamespace')
+    gamespace.appendChild(laser)
+    laser.className = 'laser'
+    console.log(laser)
+    const random = Math.ceil(Math.random() * (alienNum-1))
+    console.log(aliens[random])
+    console.log(laser)
+    laser.style.left = aliens[random].left + 'px'   ///this bit does not work- laser is always centered
+    laser.style.top = aliens[random].top + 'px'    ///this bit does not work- laser is always centered
+    setInterval(function() {
+      const s = 10
+      const distToTop = laser.offsetTop
+      laser.style.top = (distToTop + s) + 'px'
+      if (laser.offsetTop > 670) {
+        laser.style.display = 'none'
+      }
+    }, 10)
+  }
+
+
+  setInterval(function() {
+    alienLaser()
+  }, Math.random() * 3000)      //this random number needs to chnage on each calling of the function
+
+
+
+
+
+
+
+
+
+
 
   // NONE OF THE BELOW IS WORKING CODE
   // Enemy movement
