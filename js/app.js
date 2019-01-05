@@ -4,8 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   player.left = 525
   player.top = 600
 
-  const lasers = []
-  const aliens = [
+  const alienLocations = [
     {top: 50, left: 100},
     {top: 50, left: 200},
     {top: 50, left: 300},
@@ -23,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {top: 150, left: 700},
     {top: 150, left: 800}
   ]
+  const aliens = []
 
   document.onkeydown = function(e) {
     if (e.keyCode === 37) {
@@ -40,15 +40,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function createAlien() {
-    for (let i = 0; i < aliens.length; i++) {
+    for (let i = 0; i < alienLocations.length; i++) {
       const alienDiv = document.createElement('div')
       alienDiv.className = 'alien'
       document.querySelector('.gamespace').appendChild(alienDiv)
-      alienDiv.style.left = aliens[i].left + 'px'
-      alienDiv.style.top = aliens[i].top + 'px'
+      alienDiv.style.left = alienLocations[i].left + 'px'
+      alienDiv.style.top = alienLocations[i].top + 'px'
+      aliens.push(alienDiv)
+      setInterval(function() {           //had to put move function in here. TRY TO TAKE OUT LATER
+        alienLocations[i].left += 20
+        alienDiv.style.left = alienLocations[i].left + 'px'
+        alienDiv.style.top = alienLocations[i].top + 'px'
+        console.log(alienLocations[i].top)
+        console.log(alienLocations[i])
+      }, 1000)
+
     }
   }
   createAlien()
+  console.log(aliens)
+  console.log(alienLocations)
 
   // Move the player left and right //
   function movePlayer() {
@@ -73,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
     laser.className = 'laser'
     laser.style.left = player.left + 20 + 'px'
     laser.style.top = player.top - 30 + 'px'
-    lasers.push(laser) // dont think i need this
     console.log(laser)
     setInterval(function() {
       const s = 10
@@ -92,9 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
     gamespace.appendChild(laser)
     laser.className = 'laser'
     const random = Math.ceil(Math.random() * 15)
-    console.log(aliens[random])
-    laser.style.left = aliens[random].left + 40 + 'px'
-    laser.style.top = aliens[random].top + 80 + 'px'
+    console.log(alienLocations[random])
+    laser.style.left = alienLocations[random].left + 40 + 'px'
+    laser.style.top = alienLocations[random].top + 80 + 'px'
     setInterval(function() {
       const s = 10
       const distToTop = laser.offsetTop
@@ -106,11 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   setInterval(function() {
     alienLaser()
-  }, Math.random() * 3000)      //this random number needs to chnage on each calling of the function
-
-
-
-
+  }, Math.random() * 1000)      //this random number needs to chnage on each calling of the function
 
 
 
