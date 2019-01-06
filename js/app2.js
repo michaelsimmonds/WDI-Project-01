@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const playerLaserArray = []
   const alienArray =  []
   const aliensInRow = 6
+  let score = 0
 
   // CREATES A DIV. CALLED IN INIT FUNCTION
   function addDivs() {
@@ -46,9 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
         playerLaserArray.push(playerLaser)
         console.log(playerLaserArray)
         div[playerLaser].classList.add('laser')
+        checkCollision()
         div[playerLaser+width].classList.remove('laser')
       }           // GLITCHES IF YOU SHOOT INTO TOP RIGHT CORNER FOR A SECOND
-    }, 100)
+    }, 500)
   }
 
   //Creates alien rows-refactor them at some point
@@ -85,15 +87,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  //collision
-
-
-
-
-
-
-
-
+  //collision. THIS WORKS BUT THINK IT COUNTS THE HITS THREE TIMES TOO MANY TIMES
+  function checkCollision() {
+    for (let i = 0; i < alienArray.length; i++) {
+      for (let j = 0; j < playerLaserArray.length; j++) {
+        if (alienArray[i] === playerLaserArray[j]) {
+          score += 10
+          console.log(score)
+        }
+      }
+    }
+  }
 
   //init
   function init() {
@@ -111,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   init()
-  console.log(playerIndex)
+  console.log(alienArray)
 
 
 })
