@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   player.left = 525
   player.top = 600
 
+  const lasers = []
+
   const alienLocations = [
     {top: 50, left: 100},
     {top: 50, left: 200},
@@ -26,19 +28,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.onkeydown = function(e) {
     if (e.keyCode === 37) {
-      console.log('LEFT')
       player.left -= 20
       movePlayer()
     } else if (e.keyCode === 39) {
-      console.log('RIGHT')
       player.left += 20
       movePlayer()
     } else if (e.keyCode === 32) {
-      console.log('fire')
       playerLaser()
+      // console.log(lasers) //this console.log shows the lasers are being tracked. need to work out how to get them off array
     }
   }
 
+  // // TRYing TO REFACTOR THIS
+  // function createAlien() {
+  //   for (let i = 0; i < alienLocations.length; i++) {
+  //     const alienDiv = document.createElement('div')
+  //     alienDiv.className = 'alien'
+  //     document.querySelector('.gamespace').appendChild(alienDiv)
+  //     alienDiv.style.left = alienLocations[i].left + 'px'
+  //     alienDiv.style.top = alienLocations[i].top + 'px'
+  //     aliens.push({
+  //       top: alienLocations[i].top,
+  //       left: alienLocations[i].left
+  //     })
+  //     console.log(aliens)
+  //
+  //     // setInterval(function() {
+  //   alienLocations[i].left += 20
+  //   alienDiv.style.left = alienLocations[i].left + 'px'
+  //   alienDiv.style.top = alienLocations[i].top + 'px'
+  //   if (alienLocations[i].left > 1000) {                // if an alien gets all the way to the right
+  //     alienLocations[i].left -= 20
+  //     alienDiv.style.left = alienLocations[i].left + 'px'
+  //     alienDiv.style.top = alienLocations[i].top + 'px'
+  //   }
+  //     // }, 1000)
+  //   }
+  // }
+  // createAlien()
+
+  // tried to refactor above- will come back to
   function createAlien() {
     for (let i = 0; i < alienLocations.length; i++) {
       const alienDiv = document.createElement('div')
@@ -47,19 +76,31 @@ document.addEventListener('DOMContentLoaded', () => {
       alienDiv.style.left = alienLocations[i].left + 'px'
       alienDiv.style.top = alienLocations[i].top + 'px'
       aliens.push(alienDiv)
-      setInterval(function() {           //had to put move function in here. TRY TO TAKE OUT LATER
-        alienLocations[i].left += 20
-        alienDiv.style.left = alienLocations[i].left + 'px'
-        alienDiv.style.top = alienLocations[i].top + 'px'
-        console.log(alienLocations[i].top)
-        console.log(alienLocations[i])
-      }, 1000)
-
     }
   }
   createAlien()
-  console.log(aliens)
-  console.log(alienLocations)
+
+
+  //have no idea why the below isn't working
+  function moveAlienRight() {
+    for (let i = 0; i < 1; i++){
+      aliens[0].innerHtml = ''
+      console.log(aliens[0].innerHtml)
+      setInterval( () => {
+        aliens[0].innerHtml = ''
+        console.log(aliens[0].innerHtml)
+        console.log(aliens[0])
+        alienLocations[0].left += 20
+        // console.log(alienLocations[0].left)     //this works, it is rising incrementally
+        console.log(aliens[0].innerHtml = `<div class="alien" style="left: ${alienLocations[0].left}px; top: ${alienLocations[0].top}px;"></div>`)
+
+      }, 1000)
+    }
+  }
+  moveAlienRight()
+
+
+
 
   // Move the player left and right //
   function movePlayer() {
@@ -76,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Creates and shoots laser from player
+  // Creates and shoots laser from player. THIS WORKS!!!!!!!!!!!!!
   function playerLaser() {
     const laser = document.createElement('div')
     const gamespace = document.querySelector('.gamespace')
@@ -84,16 +125,21 @@ document.addEventListener('DOMContentLoaded', () => {
     laser.className = 'laser'
     laser.style.left = player.left + 20 + 'px'
     laser.style.top = player.top - 30 + 'px'
-    console.log(laser)
     setInterval(function() {
       const s = 10
       const distToTop = laser.offsetTop
       laser.style.top = (distToTop - s) + 'px'
+      lasers.push({
+        left: laser.style.left,
+        top: laser.style.top
+      })
       if (laser.offsetTop < 0) {
-        laser.style.display = 'none'
+        // laser.style.display = 'none'
+        gamespace.removeChild(laser)
       }
-    }, 10)
+    }, 100)
   }
+
 
   // Get aliens to randomly shoot
   function alienLaser() {
@@ -102,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
     gamespace.appendChild(laser)
     laser.className = 'laser'
     const random = Math.ceil(Math.random() * 15)
-    console.log(alienLocations[random])
     laser.style.left = alienLocations[random].left + 40 + 'px'
     laser.style.top = alienLocations[random].top + 80 + 'px'
     setInterval(function() {
@@ -110,57 +155,31 @@ document.addEventListener('DOMContentLoaded', () => {
       const distToTop = laser.offsetTop
       laser.style.top = (distToTop + s) + 'px'
       if (laser.offsetTop > 670) {            // if the lasers go off the end of display they disappear
-        laser.style.display = 'none'
+        // laser.style.display = 'none'
+        gamespace.removeChild(laser)
       }
     }, 100)
   }
   setInterval(function() {
     alienLaser()
-  }, Math.random() * 1000)      //this random number needs to chnage on each calling of the function
+  }, Math.random() * 3000)      //this random number needs to chnage on each calling of the function
 
 
+  // Collision. DOES NOT WORK.
+  function collision() {
+    for (let alien = 0; alien < alienLocations.length; alien++) {
+      for (let laser = 0; laser < lasers.length; laser++) {
+        if (
+          (lasers[laser].top <= alienLocations[alien].top + 50) &&
+          (lasers[laser].top > alienLocations[alien].top) &&
+          (lasers[laser].left >= alienLocations[alien].left) &&
+          (lasers[laser].left <= alienLocations[alien].left + 50)
+        ) {
+          console.log('hit')
+        }
+      }
+    }
+  }
 
-
-
-
-
-  // NONE OF THE BELOW IS WORKING CODE
-  // function moveAlienOne() {
-  //   setInterval(function() {
-  //     console.log('goin')
-  //     console.log(aliens[1].top)
-  //     aliens[1].offsetTop += 80 + 'px'
-  //     console.log(aliens[1])
-  //     // if (laser.offsetTop < 0) {
-  //     //   laser.style.display = 'none'
-  //     // }
-  //   }, 1000)
-  // }
-  // moveAlienOne()
-
-
-  //  Collision
-  // function isCollide(a, b) {
-  //   return !(
-  //     ((a.y + a.height) < (b.y)) ||
-  //         (a.y > (b.y + b.height)) ||
-  //         ((a.x + a.width) < b.x) ||
-  //         (a.x > (b.x + b.width))
-  //   )
-  // }
-  // isCollide(laser, alien)
-
-  // Enemy movement
-  // function moveAlien() {
-  //   const alienRow = document.querySelectorAll('.alien')
-  //   console.log(alienRow)
-  //   setInterval(function() {
-  //     const s = 10
-  //     const distToSide = alienRow.offsetTop
-  //     console.log('work')
-  //     alienRow.style.topLeft = (distToSide + s) + 'px'
-  //   }, 1000)
-  // }
-  // moveAlien()
 
 })
