@@ -39,35 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // // TRYing TO REFACTOR THIS
-  // function createAlien() {
-  //   for (let i = 0; i < alienLocations.length; i++) {
-  //     const alienDiv = document.createElement('div')
-  //     alienDiv.className = 'alien'
-  //     document.querySelector('.gamespace').appendChild(alienDiv)
-  //     alienDiv.style.left = alienLocations[i].left + 'px'
-  //     alienDiv.style.top = alienLocations[i].top + 'px'
-  //     aliens.push({
-  //       top: alienLocations[i].top,
-  //       left: alienLocations[i].left
-  //     })
-  //     console.log(aliens)
-  //
-  //     // setInterval(function() {
-  //   alienLocations[i].left += 20
-  //   alienDiv.style.left = alienLocations[i].left + 'px'
-  //   alienDiv.style.top = alienLocations[i].top + 'px'
-  //   if (alienLocations[i].left > 1000) {                // if an alien gets all the way to the right
-  //     alienLocations[i].left -= 20
-  //     alienDiv.style.left = alienLocations[i].left + 'px'
-  //     alienDiv.style.top = alienLocations[i].top + 'px'
-  //   }
-  //     // }, 1000)
-  //   }
-  // }
-  // createAlien()
-
-  // tried to refactor above- will come back to
+  // TRYing TO REFACTOR THIS
   function createAlien() {
     for (let i = 0; i < alienLocations.length; i++) {
       const alienDiv = document.createElement('div')
@@ -75,32 +47,25 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelector('.gamespace').appendChild(alienDiv)
       alienDiv.style.left = alienLocations[i].left + 'px'
       alienDiv.style.top = alienLocations[i].top + 'px'
-      aliens.push(alienDiv)
+      aliens.push({
+        top: alienLocations[i].top,
+        left: alienLocations[i].left
+      })
+      console.log(aliens)
+
+      // setInterval(function() {
+    alienLocations[i].left += 20
+    alienDiv.style.left = alienLocations[i].left + 'px'
+    alienDiv.style.top = alienLocations[i].top + 'px'
+    if (alienLocations[i].left > 1000) {                // if an alien gets all the way to the right
+      alienLocations[i].left -= 20
+      alienDiv.style.left = alienLocations[i].left + 'px'
+      alienDiv.style.top = alienLocations[i].top + 'px'
+    }
+      // }, 1000)
     }
   }
   createAlien()
-
-
-  //have no idea why the below isn't working
-  function moveAlienRight() {
-    for (let i = 0; i < 1; i++){
-      aliens[0].innerHtml = ''
-      console.log(aliens[0].innerHtml)
-      setInterval( () => {
-        aliens[0].innerHtml = ''
-        console.log(aliens[0].innerHtml)
-        console.log(aliens[0])
-        alienLocations[0].left += 20
-        // console.log(alienLocations[0].left)     //this works, it is rising incrementally
-        console.log(aliens[0].innerHtml = `<div class="alien" style="left: ${alienLocations[0].left}px; top: ${alienLocations[0].top}px;"></div>`)
-
-      }, 1000)
-    }
-  }
-  moveAlienRight()
-
-
-
 
   // Move the player left and right //
   function movePlayer() {
