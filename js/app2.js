@@ -1,18 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
   const grid = document.querySelector('.grid')
-  const width = 20
+  const width = 20 // cant change this at the mo- doesn't display properly
   let div
   let prevIndex
   let playerIndex
-  let numOfAliens = 20
+  const playerLaserArray = []
+  const alienArray =  []
+  const aliensInRow = 6
 
-  // CREATES A DIV
+  // CREATES A DIV. CALLED IN INIT FUNCTION
   function addDivs() {
     const newDiv = document.createElement('div')
     grid.appendChild(newDiv)
   }
 
-  // HanDLES KEYS
+  // HANDLES KEYS
   document.onkeydown = function(e) {
     prevIndex = playerIndex
     if (e.keyCode === 37 && playerIndex > div.length - width*2) {
@@ -32,40 +34,65 @@ document.addEventListener('DOMContentLoaded', () => {
     div[prevIndex].classList.remove('player')
   }
 
-// Handles movement of player laser. Is called in function to handle keys
+  // Handles movement of player laser. Is called in function to handle keys
   function shootPlayerLaser() {
     let playerLaser = playerIndex
     setInterval(function() {
       playerLaser -= 20
       if (playerLaser < 0) {
-        console.log(div[playerLaser+width])
         div[playerLaser+width].classList.remove('laser')
-        div[playerLaser].classList.remove('laser')
+        div[playerLaser].classList.remove('laser')          //this works but I dont know why- error showing
       } else {
+        playerLaserArray.push(playerLaser)
+        console.log(playerLaserArray)
         div[playerLaser].classList.add('laser')
         div[playerLaser+width].classList.remove('laser')
       }           // GLITCHES IF YOU SHOOT INTO TOP RIGHT CORNER FOR A SECOND
     }, 100)
   }
 
-
-  //have multiple rows of aliens that move as a block
-  //if an alien gets hit by a laser, it removes the alien class
-
-  // let alienRows = 3
-  // let aliensInRow = 6
-  // let totalAliens = alienRows * aliensInRow
-
-  // function createAliens() {
-  //   let startIndex = 24
-  //   for ( let i = 0; i < totalAliens; i++) {
-  //     div[startIndex + i*2].classList.add('alien')
-  //
-  //   }
-  // }
-
+  //Creates alien rows-refactor them at some point
+  function createRowOne() {
+    let startIndex = 22
+    for ( let i = 0; i < aliensInRow; i++) {
+      div[startIndex].classList.add('alien')
+      alienArray.push(startIndex)
+      startIndex += 2
+    }
+  }
+  function createRowTwo() {
+    let startIndex = 43
+    for ( let i = 0; i < aliensInRow; i++) {
+      div[startIndex].classList.add('alien')
+      alienArray.push(startIndex)
+      startIndex += 2
+    }
+  }
+  function createRowThree() {
+    let startIndex = 62
+    for ( let i = 0; i < aliensInRow; i++) {
+      div[startIndex].classList.add('alien')
+      alienArray.push(startIndex)
+      startIndex += 2
+    }
+  }
+  function createRowFour() {
+    let startIndex = 83
+    for ( let i = 0; i < aliensInRow; i++) {
+      div[startIndex].classList.add('alien')
+      alienArray.push(startIndex)
+      startIndex += 2
+    }
+  }
 
   //collision
+
+
+
+
+
+
+
 
 
   //init
@@ -76,7 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
     div = document.querySelectorAll('div')
     playerIndex = (div.length-1) - (width*1.5)
     div[playerIndex].classList.add('player')
-    createAliens()
+    // createAliens()
+    createRowOne()
+    createRowTwo()
+    createRowThree()
+    createRowFour()
   }
 
   init()
