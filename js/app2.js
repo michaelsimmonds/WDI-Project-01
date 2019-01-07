@@ -10,8 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let score = 0
   let direction = 'right'
   let changeDirection = false
-  let interval
-  let playerLaser
 
   // Creates divs that make up the grid. Called in init function.
   function addDivs() {
@@ -82,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         changeDirection = false
       }else{
         moveAlien(direction)        //this starts the directions. it is set to 'right' at the top intiially
-        // alienBoundary()                //this check alien boundaries and see whether to change direction
+        alienBoundary()                //this check alien boundaries and see whether to change direction
         endgameWin()
       }
     }, 500)
@@ -90,19 +88,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function alienBoundary() {
     for (let i=0; i < alienArray.length; i++) {
-      if (alienArray[i]%20 === 0)
-      console.log('mod20')
+      if (alienArray[i]%width === 0) {
+        console.log('mod20')
+        changeDirection = true
+      } if (alienArray[i]%width === 1) {    //
+        console.log('mod1')
+        changeDirection = true
+        direction = 'left'
+      }
     }
   }
-
-
-
-
-
-
-
-
-
 
   function moveAlien(direction) {
     for (let i=0; i < alienArray.length; i++) {
