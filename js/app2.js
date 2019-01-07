@@ -6,10 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let playerIndex
   const playerLaserArray = []
   const alienArray =  []
-  const aliensInRow = 6
+  const aliensInRow = 8
   let score = 0
   let direction = 'right'
   let changeDirection = false
+  let interval
+  let playerLaser
 
   // Creates divs that make up the grid. Called in init function.
   function addDivs() {
@@ -27,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
       playerIndex++
       movePlayer(playerIndex, prevIndex)
     } else if (e.keyCode === 32) {
-      shootPlayerLaser()
+      shootPlayerLaser(playerIndex)
     }
   }
 
@@ -37,56 +39,29 @@ document.addEventListener('DOMContentLoaded', () => {
     div[prevIndex].classList.remove('player')
   }
 
+  function laserInterval(playerLaser) {
+    playerLaser -= width
+    if (playerLaser < 0) {
+      div[playerLaser+width].classList.remove('laser')
+    } else {
+      playerLaserArray.push(playerLaser)
+      if (playerLaserArray.length > 1) {
+        playerLaserArray.splice(playerLaser.length-1, 1)  //removes the previous position of laser in playerLaserArray
+      }
+      div[playerLaser].classList.add('laser')
+      div[playerLaser+width].classList.remove('laser')
+      console.log(playerLaserArray)
+      if(!checkCollision()) setTimeout(() => laserInterval(playerLaser), 100)
+    }           // GLITCHES IF YOU SHOOT INTO TOP RIGHT CORNER
+  }
+
   // Handles movement of player laser. Is called in function to handle keys
-  function shootPlayerLaser() {
-    let playerLaser = playerIndex
-    const interval = setInterval(laserInterval, 100)
-    function laserInterval() {
-      playerLaser -= width
-      if (playerLaser < 0) {
-        div[playerLaser+width].classList.remove('laser')
-        clearInterval(interval)
-      } else {
-        playerLaserArray.push(playerLaser)
-        if (playerLaserArray.length > 1) {
-          playerLaserArray.splice(playerLaser.length-1, 1)  //removes the previous position of laser in playerLaserArray
-        }
-        div[playerLaser].classList.add('laser')
-        div[playerLaser+width].classList.remove('laser')
-        console.log(playerLaserArray)
-        checkCollision()
-
-      }           // GLITCHES IF YOU SHOOT INTO TOP RIGHT CORNER
-    }
+  function shootPlayerLaser(startPoint) {
+    setTimeout(() => laserInterval(startPoint), 100)
   }
 
-  //Creates alien rows-refactor them at some point
-  function createRowOne() {
-    let startIndex = 22
-    for ( let i = 0; i < aliensInRow; i++) {
-      div[startIndex].classList.add('alien')
-      alienArray.push(startIndex)
-      startIndex += 2
-    }
-  }
-  function createRowTwo() {
-    let startIndex = 43
-    for ( let i = 0; i < aliensInRow; i++) {
-      div[startIndex].classList.add('alien')
-      alienArray.push(startIndex)
-      startIndex += 2
-    }
-  }
-  function createRowThree() {
-    let startIndex = 62
-    for ( let i = 0; i < aliensInRow; i++) {
-      div[startIndex].classList.add('alien')
-      alienArray.push(startIndex)
-      startIndex += 2
-    }
-  }
-  function createRowFour() {
-    let startIndex = 83
+  //Creates alien rows. Called in init function.
+  function createRow(startIndex) {
     for ( let i = 0; i < aliensInRow; i++) {
       div[startIndex].classList.add('alien')
       alienArray.push(startIndex)
@@ -107,10 +82,27 @@ document.addEventListener('DOMContentLoaded', () => {
         changeDirection = false
       }else{
         moveAlien(direction)        //this starts the directions. it is set to 'right' at the top intiially
-        // checkAlien()                //this check alien boundaries and see whether to change direction
+        // alienBoundary()                //this check alien boundaries and see whether to change direction
+        endgameWin()
       }
-    }, 1000)
+    }, 500)
   }
+
+  function alienBoundary() {
+    for (let i=0; i < alienArray.length; i++) {
+      if (alienArray[i]%20 === 0)
+      console.log('mod20')
+    }
+  }
+
+
+
+
+
+
+
+
+
 
   function moveAlien(direction) {
     for (let i=0; i < alienArray.length; i++) {
@@ -136,41 +128,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  //collision. THIS WORKS BUT THINK IT COUNTS THE HITS THREE TIMES TOO MANY TIMES
+  //Collision
   function checkCollision() {
     for (let i = 0; i < alienArray.length; i++) {
       for (let j = 0; j < playerLaserArray.length; j++) {
         if (alienArray[i] === playerLaserArray[j]) {
           console.log('hit')
           score += 10
-          console.log(playerLaserArray[j])
-          console.log(alienArray[i])
           div[alienArray[i]].classList.remove('alien')
           div[playerLaserArray[j]].classList.remove('laser')
           alienArray.splice(i, 1)
-          playerLaserArray.splice(i, 1)
+          return true
         }
       }
+    }
+    return false
+  }
+
+  function endgameWin() {
+    if (alienArray.length === 0) {
+      console.log('end')
     }
   }
 
   //init
   function init() {
-    for (let i = 0; i < width * width; i++) {
-      addDivs()
-    }
+    for (let i = 0; i < width * width; i++) addDivs()
     div = document.querySelectorAll('div')
     playerIndex = (div.length-1) - (width*1.5)
     div[playerIndex].classList.add('player')
-    createRowOne()
-    createRowTwo()
-    createRowThree()
-    createRowFour()
+    createRow(22)
+    createRow(43)
+    createRow(62)
+    createRow(83)
     gameLoop()
   }
 
   init()
   console.log(alienArray)
-  console.log(playerLaserArray)
 
 })
