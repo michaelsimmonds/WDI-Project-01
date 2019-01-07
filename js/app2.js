@@ -40,19 +40,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handles movement of player laser. Is called in function to handle keys
   function shootPlayerLaser() {
     let playerLaser = playerIndex
-    setInterval(function() {
-      playerLaser -= 20
+    const interval = setInterval(laserInterval, 100)
+    function laserInterval() {
+      playerLaser -= width
       if (playerLaser < 0) {
         div[playerLaser+width].classList.remove('laser')
-        div[playerLaser].classList.remove('laser')          //this works but I dont know why- error showing
+        clearInterval(interval)
       } else {
         playerLaserArray.push(playerLaser)
-        // console.log(playerLaserArray)
+        if (playerLaserArray.length > 1) {
+          playerLaserArray.splice(playerLaser.length-1, 1)  //removes the previous position of laser in playerLaserArray
+        }
         div[playerLaser].classList.add('laser')
-        checkCollision()
         div[playerLaser+width].classList.remove('laser')
+        console.log(playerLaserArray)
+        checkCollision()
+
       }           // GLITCHES IF YOU SHOOT INTO TOP RIGHT CORNER
-    }, 100)
+    }
   }
 
   //Creates alien rows-refactor them at some point
@@ -123,12 +128,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function showAlienMove() {
     for (let i=0; i < div.length; i++) {
       if(div[i].className === 'alien') {
-        console.log('works')
-        div[i].classList.remove('alien')
+        div[i].classList.remove('alien')          //if any div has class alien, remove it
       }
     }
     for (let i=0; i < alienArray.length; i++) {
-      div[alienArray[i]].classList.add('alien')
+      div[alienArray[i]].classList.add('alien')   //the div the alien is moving to, add the class alien
     }
   }
 
@@ -137,13 +141,14 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < alienArray.length; i++) {
       for (let j = 0; j < playerLaserArray.length; j++) {
         if (alienArray[i] === playerLaserArray[j]) {
+          console.log('hit')
           score += 10
-          alienArray[i].classList.remove('alien')
-          playerLaserArray[j].classList.remove('laser')
-          // playerLaserArray[j] = undefined
-          // alienArray.splice(i, 1)
-          // playerLaserArray.splice(i, 1)
-          // console.log(alienArray)
+          console.log(playerLaserArray[j])
+          console.log(alienArray[i])
+          div[alienArray[i]].classList.remove('alien')
+          div[playerLaserArray[j]].classList.remove('laser')
+          alienArray.splice(i, 1)
+          playerLaserArray.splice(i, 1)
         }
       }
     }
@@ -166,6 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   init()
   console.log(alienArray)
-
+  console.log(playerLaserArray)
 
 })
