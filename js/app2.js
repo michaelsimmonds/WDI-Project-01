@@ -8,10 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const alienArray =  []
   const aliensInRow = 7
   let score = 0
-  const loopSpeed = 200
   let direction = 'right'
   let gameId
   let changeDirection = false
+  let playerLives = 3
 
   // Creates divs that make up the grid. Called in init function.
   function addDivs() {
@@ -62,44 +62,44 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  const alienLaserArray = []
+  const alienBombArray = []
   //Alien laser
-  function alienLaser() {
+  function alienBomb() {
     const rand = Math.ceil((Math.random() * alienArray.length))
-    let alienLaser = alienArray[rand]
-    let bombInt = setInterval(function() {
-      console.log('called')
-      alienLaser += width
-      if (alienLaser > width*width) {
-        div[alienLaser-width].classList.remove('bomb')
+    let alienBomb = alienArray[rand]
+    const bombInt = setInterval(function() {
+      alienBomb += width
+      if (alienBomb > width*width) {
+        div[alienBomb-width].classList.remove('bomb')
         clearInterval(bombInt)
       } else {
-        alienLaserArray.push(alienLaser)
-        console.log('called')
-        div[alienLaser].classList.add('bomb')
-        div[alienLaser-width].classList.remove('bomb')
+        alienBombArray.push(alienBomb)
+        if (alienBombArray.length > 1) {
+          alienBombArray.splice(alienBomb.length-1, 1)  //removes the previous position of bomb bombArray
+        }
+        div[alienBomb].classList.add('bomb')            //think this creates error if bomb meets a bomb. do while loop?
+        div[alienBomb-width].classList.remove('bomb')
+        checkBombHit()
+        console.log(alienBombArray)
       }
-    }, 30)
+    }, 50)
   }
 
+  function checkBombHit() {
+    for (let i = 0; i < alienBombArray.length; i++) {
+      if (alienBombArray[i] === playerIndex) {
+        playerLives--
+        updateHeading()
+        console.log('hit')
+        console.log(playerLives)
+        if (playerLives === 0) {
+          endgameLose()
+        }
+      }
+    }
+  }
 
   // probability of shooting- get math rand and times by ten. set difficulty at top of page,1 easiest, 10 hardest. if the randomly genrated number if less than diffucutly, get and alien to shoot.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   //Creates alien rows. Called in init function.
@@ -111,10 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // starts the aliens moving and should be refered back to to change direction
-
-
-  // PUT THIS INTO A NAMED FUNCTION SO I CAN CLEAR IF WHEN GAME ENDS
+  // Game loop. Puts main componenet of the game on a timer
   function gameLoop() {
     gameId = setInterval(function() {
       if(changeDirection){               //starts as false so these if options are skipped
@@ -130,13 +127,13 @@ document.addEventListener('DOMContentLoaded', () => {
         alienBoundary()                //this check alien boundaries and see whether to change direction
         endgameWin()
         endgameLose()
-        alienLaser()
+        alienBomb()
         if (endgameLose() === true) {
           console.log('endgame true')
           //CLEAR THE interval TO STOP THIS CODE FROM RUNNING
         }
       }
-    }, loopSpeed)
+    }, 200)
   }
 
   function alienBoundary() {
@@ -174,14 +171,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  //Collision
+  //Sets the display whist the game is in play
+  function updateHeading() {
+    document.querySelector('.aliensLeft').innerText = `There are ${alienArray.length -1} aliens remaining and you have ${playerLives} lives left!`
+  }
+
+  //Checks the collision between lasers and aliens
   function checkCollision() {
     for (let i = 0; i < alienArray.length; i++) {
       for (let j = 0; j < playerLaserArray.length; j++) {
         if (alienArray[i] === playerLaserArray[j]) {
           score += 1000
           //idea for score- time the whole thing and divide by score to get ultimate score. longer you take, lower the score
-          document.querySelector('.aliensLeft').innerText = `Aliens remaining: ${alienArray.length -1}`
+          updateHeading()
           div[alienArray[i]].classList.remove('alien')
           div[playerLaserArray[j]].classList.remove('laser')
           alienArray.splice(i, 1)
@@ -192,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return false
   }
 
+  // Shows the score if the player wins by defeating all the aliens
   function endgameWin() {
     if (alienArray.length === 0) {
       clearInterval(gameId)
@@ -230,7 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
     createRow(102)
     gameLoop()
   }
-
 
   init()
 
