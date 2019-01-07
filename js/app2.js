@@ -6,9 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let playerIndex
   const playerLaserArray = []
   const alienArray =  []
-  const aliensInRow = 8
+  const aliensInRow = 7
   let score = 0
+  const loopSpeed = 200
   let direction = 'right'
+  let gameId
   let changeDirection = false
 
   // Creates divs that make up the grid. Called in init function.
@@ -49,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
       div[playerLaser].classList.add('laser')
       div[playerLaser+width].classList.remove('laser')
       console.log(playerLaserArray)
-      if(!checkCollision()) setTimeout(() => laserInterval(playerLaser), 100)
+      if(!checkCollision()) setTimeout(() => laserInterval(playerLaser), 30)
     }           // GLITCHES IF YOU SHOOT INTO TOP RIGHT CORNER
   }
 
@@ -68,8 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // starts the aliens moving and should be refered back to to change direction
+
+
+  // PUT THIS INTO A NAMED FUNCTION SO I CAN CLEAR IF WHEN GAME ENDS
   function gameLoop() {
-    setInterval(function() {
+    gameId = setInterval(function() {
       if(changeDirection){               //starts as false so these if options are skipped
         moveAlien('down')
         if(direction ==='left'){
@@ -82,17 +87,20 @@ document.addEventListener('DOMContentLoaded', () => {
         moveAlien(direction)        //this starts the directions. it is set to 'right' at the top intiially
         alienBoundary()                //this check alien boundaries and see whether to change direction
         endgameWin()
+        endgameLose()
+        if (endgameLose() === true) {
+          console.log('endgame true')
+          //CLEAR THE interval TO STOP THIS CODE FROM RUNNING
+        }
       }
-    }, 500)
+    }, loopSpeed)
   }
 
   function alienBoundary() {
     for (let i=0; i < alienArray.length; i++) {
       if (alienArray[i]%width === 0) {
-        console.log('mod20')
         changeDirection = true
       } if (alienArray[i]%width === 1) {    //
-        console.log('mod1')
         changeDirection = true
         direction = 'left'
       }
@@ -128,8 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < alienArray.length; i++) {
       for (let j = 0; j < playerLaserArray.length; j++) {
         if (alienArray[i] === playerLaserArray[j]) {
-          console.log('hit')
-          score += 10
+          score += 1000
+          //idea for score- time the whole thing and divide by score to get ultimate score. longer you take, lower the score
+          document.querySelector('.score').innerText = `Score: ${score}`
           div[alienArray[i]].classList.remove('alien')
           div[playerLaserArray[j]].classList.remove('laser')
           alienArray.splice(i, 1)
@@ -142,7 +151,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function endgameWin() {
     if (alienArray.length === 0) {
-      console.log('end')
+      clearInterval(gameId)
+      console.log('win')
+      document.querySelector('.result').innerText = 'You win! The aliens are all destroyed!'
+      return true
+    }
+  }
+
+  function endgameLose() {
+    for (let i = 0; i < alienArray.length; i++) {
+      if (alienArray[i] > (width*width) - (width*2)) {
+        clearInterval(gameId)
+        console.log('lose')
+        document.querySelector('.result').innerText = 'You lose! The aliens have invaded!'
+        return true
+      }
     }
   }
 
@@ -156,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     createRow(43)
     createRow(62)
     createRow(83)
+    createRow(102)
     gameLoop()
   }
 
