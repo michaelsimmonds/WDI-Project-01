@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // laser.style.display = 'none'
         gamespace.removeChild(laser)
       }
-    }, 100)
+    }, 10)
   }
   setInterval(function() {
     alienLaser()

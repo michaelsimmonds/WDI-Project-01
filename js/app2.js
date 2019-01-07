@@ -39,6 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
     div[prevIndex].classList.remove('player')
   }
 
+  // Handles movement of player laser. Is called in function to handle keys
+  function shootPlayerLaser(startPoint) {               //startpoint is retrieved from player pos when spacebar pressed
+    setTimeout(() => laserInterval(startPoint), 100)
+  }
+
+  // Player shoots a laser
   function laserInterval(playerLaser) {
     playerLaser -= width
     if (playerLaser < 0) {
@@ -55,10 +61,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }           // GLITCHES IF YOU SHOOT INTO TOP RIGHT CORNER
   }
 
-  // Handles movement of player laser. Is called in function to handle keys
-  function shootPlayerLaser(startPoint) {
-    setTimeout(() => laserInterval(startPoint), 100)
+
+  const alienLaserArray = []
+  //Alien laser
+  function alienLaser() {
+    const rand = Math.ceil((Math.random() * alienArray.length))
+    let alienLaser = alienArray[rand]
+    let bombInt = setInterval(function() {
+      console.log('called')
+      alienLaser += width
+      if (alienLaser > width*width) {
+        div[alienLaser-width].classList.remove('bomb')
+        clearInterval(bombInt)
+      } else {
+        alienLaserArray.push(alienLaser)
+        console.log('called')
+        div[alienLaser].classList.add('bomb')
+        div[alienLaser-width].classList.remove('bomb')
+      }
+    }, 30)
   }
+
+
+  // probability of shooting- get math rand and times by ten. set difficulty at top of page,1 easiest, 10 hardest. if the randomly genrated number if less than diffucutly, get and alien to shoot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   //Creates alien rows. Called in init function.
   function createRow(startIndex) {
@@ -88,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alienBoundary()                //this check alien boundaries and see whether to change direction
         endgameWin()
         endgameLose()
+        alienLaser()
         if (endgameLose() === true) {
           console.log('endgame true')
           //CLEAR THE interval TO STOP THIS CODE FROM RUNNING
@@ -138,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (alienArray[i] === playerLaserArray[j]) {
           score += 1000
           //idea for score- time the whole thing and divide by score to get ultimate score. longer you take, lower the score
-          document.querySelector('.score').innerText = `Score: ${score}`
+          document.querySelector('.aliensLeft').innerText = `Aliens remaining: ${alienArray.length -1}`
           div[alienArray[i]].classList.remove('alien')
           div[playerLaserArray[j]].classList.remove('laser')
           alienArray.splice(i, 1)
@@ -153,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (alienArray.length === 0) {
       clearInterval(gameId)
       console.log('win')
-      document.querySelector('.result').innerText = 'You win! The aliens are all destroyed!'
+      document.querySelector('.result').innerText = `You win! All the aliens destroyed! You scored ${score}`
       return true
     }
   }
@@ -162,6 +205,11 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < alienArray.length; i++) {
       if (alienArray[i] > (width*width) - (width*2)) {
         clearInterval(gameId)
+        for (let i=0; i < div.length; i++) {
+          if(div[i].className === 'alien') {
+            div[i].classList.remove('alien')          //if any div has class alien, remove it
+          }
+        }
         console.log('lose')
         document.querySelector('.result').innerText = 'You lose! The aliens have invaded!'
         return true
@@ -183,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gameLoop()
   }
 
+
   init()
-  console.log(alienArray)
 
 })

@@ -15,6 +15,9 @@ h1, h2 {
   display: inline;
 }
 
+h2 {
+  margin: 10px;
+}
 .grid{
   align-items: center;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
@@ -45,6 +48,6 @@ h1, h2 {
   background-color: green
 }
 
-.alien1 {
+.bomb {
   background-color: gold;
 }
