@@ -15,8 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let level = 1
   const alienBombArray = []
   let gameLoopSpeed = 400
+  const display = document.querySelector('.display')
   const resultArea = document.querySelector('.result')
   const levelArea = document.querySelector('.level')
+  const scoreArea = document.querySelector('.score')
 
   // *************************** PLAYER MOVEMENT AND ACTION *********************************
 
@@ -178,9 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
   //   }
   // }
 
-  // probability of shooting- get math rand and times by ten. set difficulty at top of page,1 easiest, 10 hardest. if the randomly genrated number if less than diffucutly, get and alien to shoot.
-
-
   //****************************** ENDGAMES **************************************
 
   // Shows the score if the player wins by defeating all the aliens
@@ -192,6 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       gameLoop()
       level += 1
+      if (level > 8) level = 8
       levelArea.innerText = `Level: ${level}`
       gameLoopSpeed -= 50
       console.log(gameLoopSpeed)
@@ -207,16 +207,26 @@ document.addEventListener('DOMContentLoaded', () => {
           if(div[i].className === 'alien') div[i].classList.remove('alien')          //if any div has class alien, remove it
         }
         updateHeading()
-        if (alienArray[i] > (width*width) - (width*2)) resultArea.innerText = 'You survived but the aliens invaded...'
-        if (playerLives === 0) resultArea.innerText = 'You have run out of lives...'
+        if (alienArray[i] > (width*width) - (width*2)) display.innerText = 'You survived but the aliens invaded...'
+        if (playerLives === 0) display.innerText = 'You ran out of lives...'
+        scoreArea.innerText = `You scored ${score}. ${endgameComment()}`
       }
     }
   }
+
+  function endgameComment() {
+    if (level === 1 || level === 2) return 'Terrible outcome in humanity\'s last stand'
+    if (level === 3 || level === 4) return
+    if (level === 5 || level === 6) return ''
+    if (level === 7 || level === 8) return 'How did you survive so long?!'
+  }
+
 
   //*************************** GAMELOOP, INIT AND DISPLAY **********************************
 
   // Game loop. Puts main component of the game on a timer
   function gameLoop() {
+    display.innerText = `There are 35 aliens remaining and you have ${playerLives} lives left!`
     createRow(22)
     createRow(43)
     createRow(62)
@@ -246,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //Sets the display whist the game is in play
   function updateHeading() {
-    document.querySelector('.aliensLeft').innerText = `There are ${alienArray.length -1} aliens remaining and you have ${playerLives} lives left!`
+    display.innerText = `There are ${alienArray.length -1} aliens remaining and you have ${playerLives} lives left!`
   }
 
   //init
