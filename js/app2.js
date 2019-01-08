@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Player shoots a laser
   function laserInterval(playerLaser) {
     playerLaser -= width
-    if (playerLaser < 0) div[playerLaser+width].classList.remove('laser')
+    if (playerLaser <= 0) div[playerLaser+width].classList.remove('laser')
     else {
       playerLaserArray.push(playerLaser)
       if (playerLaserArray.length > 1) playerLaserArray.splice(playerLaser.length-1, 1)  //removes the previous position of laser in playerLaserArray
