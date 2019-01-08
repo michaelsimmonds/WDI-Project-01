@@ -12,7 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let gameId
   let changeDirection = false
   let playerLives = 3
+  let level = 1
   const alienBombArray = []
+  let gameLoopSpeed = 100
+  const resultArea = document.querySelector('.result')
 
   // *************************** PLAYER MOVEMENT AND ACTION *********************************
 
@@ -47,16 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Player shoots a laser
   function laserInterval(playerLaser) {
     playerLaser -= width
-    if (playerLaser < 0) {
-      div[playerLaser+width].classList.remove('laser')
-    } else {
+    if (playerLaser < 0) div[playerLaser+width].classList.remove('laser')
+    else {
       playerLaserArray.push(playerLaser)
-      if (playerLaserArray.length > 1) {
-        playerLaserArray.splice(playerLaser.length-1, 1)  //removes the previous position of laser in playerLaserArray
-      }
+      if (playerLaserArray.length > 1) playerLaserArray.splice(playerLaser.length-1, 1)  //removes the previous position of laser in playerLaserArray
       div[playerLaser].classList.add('laser')
       div[playerLaser+width].classList.remove('laser')
-      console.log(playerLaserArray)
       // checkBombLaserCollision()
       if(!checkAlienLaserCollision()) setTimeout(() => laserInterval(playerLaser), 30)
     }           // GLITCHES IF YOU SHOOT INTO TOP RIGHT CORNER
@@ -76,9 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function alienBoundary() {
     for (let i=0; i < alienArray.length; i++) {
-      if (alienArray[i]%width === 0) {
-        changeDirection = true
-      } if (alienArray[i]%width === 1) {    //
+      if (alienArray[i]%width === 0) changeDirection = true
+      if (alienArray[i]%width === 1) {    //
         changeDirection = true
         direction = 'left'
       }
@@ -87,22 +85,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function moveAlien(direction) {
     for (let i=0; i < alienArray.length; i++) {
-      if (direction === 'left') {
-        alienArray[i] -= 1
-      } else if (direction === 'right') {
-        alienArray[i] += 1
-      } else {                        //don't put set direction to down here
-        alienArray[i] += width
-      }
+      if (direction === 'left') alienArray[i] -= 1
+      else if (direction === 'right') alienArray[i] += 1
+      else alienArray[i] += width
     }
     showAlienMove()
   }
 
   function showAlienMove() {
     for (let i=0; i < div.length; i++) {
-      if(div[i].className === 'alien') {
-        div[i].classList.remove('alien')          //if any div has class alien, remove it
-      }
+      if(div[i].className === 'alien') div[i].classList.remove('alien')          //if any div has class alien, remove it
     }
     for (let i=0; i < alienArray.length; i++) {
       div[alienArray[i]].classList.add('alien')   //the div the alien is moving to, add the class alien
@@ -111,10 +103,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // *************************** ALIEN BOMB *********************************
 
+  //Runs the alienBomb if the random number is less than the bomb rate
+  function checkFire() {
+    const random = Math.random()
+    if (random < 0.5) alienBomb()
+  }
+
   //Alien Bomb
   function alienBomb() {
-    const rand = Math.ceil((Math.random() * alienArray.length))
-    let alienBomb = alienArray[rand]
+    const rand = Math.floor((Math.random() * alienArray.length))
+    let alienBomb = alienArray[rand] + width
     const bombInt = setInterval(function() {
       alienBomb += width
       if (alienBomb > width*width) {                  // if the bomb goes of the page, remove
@@ -125,14 +123,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (alienBombArray.length > 1) {           // I dont want this. need each bomb to have their position
           alienBombArray.splice(alienBomb.length-1, 1)  //removes the previous position of bomb bombArray
         }
-        div[alienBomb].classList.add('bomb')            //think this creates error if bomb meets a bomb. do while loop?
-        div[alienBomb-width].classList.remove('bomb')
-        checkBombHit()
-        console.log(alienBombArray)
+        if (alienArray.length > 0) {
+          div[alienBomb].classList.add('bomb')
+          div[alienBomb-width].classList.remove('bomb')
+          checkBombHit()
+        }
       }
-    }, 300)
+    }, 100)
   }
 
+  // there is a glitch that the alien class appears behind the bomb square after if it is shot
 
   // *************************** COLLISION CHECKS *********************************
 
@@ -142,11 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (alienBombArray[i] === playerIndex) {
         playerLives--
         updateHeading()
-        console.log('hit')
-        console.log(playerLives)
-        if (playerLives === 0) {
-          endgameLose()
-        }
+        if (playerLives === 0) endgameLose()
       }
     }
   }
@@ -186,27 +182,29 @@ document.addEventListener('DOMContentLoaded', () => {
   //****************************** ENDGAMES **************************************
 
   // Shows the score if the player wins by defeating all the aliens
-  function endgameWin() {
+  function nextLevel() {
     if (alienArray.length === 0) {
       clearInterval(gameId)
-      console.log('win')
-      document.querySelector('.result').innerText = `You win! All the aliens destroyed! You scored ${score}`
-      return true
+      for (let i=0; i < div.length; i++) {
+        if(div[i].className === 'bomb') div[i].classList.remove('bomb')          //if any div has class alien, remove it
+      }
+      gameLoop()
+      level += 1
+      gameLoopSpeed -= 100
     }
   }
 
   function endgameLose() {
     for (let i = 0; i < alienArray.length; i++) {
-      if (alienArray[i] > (width*width) - (width*2)) {
+      if (alienArray[i] > (width*width) - (width*2) || playerLives === 0) {
+        //THERE'S A GLITCH WHERE IF AN ALIEN HAS SHOT IT DOESNT DISAPPEAR
         clearInterval(gameId)
         for (let i=0; i < div.length; i++) {
-          if(div[i].className === 'alien') {
-            div[i].classList.remove('alien')          //if any div has class alien, remove it
-          }
+          if(div[i].className === 'alien') div[i].classList.remove('alien')          //if any div has class alien, remove it
         }
-        console.log('lose')
-        document.querySelector('.result').innerText = 'You lose! The aliens have invaded!'
-        return true
+        updateHeading()
+        if (alienArray[i] > (width*width) - (width*2)) resultArea.innerText = 'You survived but the aliens invaded...'
+        if (playerLives === 0) resultArea.innerText = 'You have run out of lives...'
       }
     }
   }
@@ -215,27 +213,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Game loop. Puts main component of the game on a timer
   function gameLoop() {
+    createRow(22)
+    createRow(43)
+    createRow(62)
+    createRow(83)
+    createRow(102)
     gameId = setInterval(function() {
       if(changeDirection){               //starts as false so these if options are skipped
         moveAlien('down')
-        if(direction ==='left'){
-          direction ='right'
-        }else{
-          direction ='left'
-        }
+        if(direction ==='left') direction ='right'
+        else direction ='left'
         changeDirection = false
-      }else{
+      } else {
         moveAlien(direction)        //this starts the directions. it is set to 'right' at the top intiially
         alienBoundary()                //this check alien boundaries and see whether to change direction
-        endgameWin()
+        nextLevel()
         endgameLose()
-        alienBomb()
-        if (endgameLose() === true) {
-          console.log('endgame true')
-          //CLEAR THE interval TO STOP THIS CODE FROM RUNNING
-        }
+        checkFire()
       }
-    }, 1000)
+    }, gameLoopSpeed)
   }
 
   // Creates divs that make up the grid. Called in init function.
@@ -255,11 +251,6 @@ document.addEventListener('DOMContentLoaded', () => {
     div = document.querySelectorAll('div')
     playerIndex = (div.length-1) - (width*1.5)
     div[playerIndex].classList.add('player')
-    createRow(22)
-    createRow(43)
-    createRow(62)
-    createRow(83)
-    createRow(102)
     gameLoop()
   }
 
