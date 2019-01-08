@@ -12,12 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let gameId
   let changeDirection = false
   let playerLives = 3
+  const alienBombArray = []
 
-  // Creates divs that make up the grid. Called in init function.
-  function addDivs() {
-    const newDiv = document.createElement('div')
-    grid.appendChild(newDiv)
-  }
+  // *************************** PLAYER MOVEMENT AND ACTION *********************************
 
   // Handles the keys
   document.onkeydown = function(e) {
@@ -39,6 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
     div[prevIndex].classList.remove('player')
   }
 
+
+  // *************************** PLAYER LASER *********************************
+
   // Handles movement of player laser. Is called in function to handle keys
   function shootPlayerLaser(startPoint) {               //startpoint is retrieved from player pos when spacebar pressed
     setTimeout(() => laserInterval(startPoint), 100)
@@ -57,50 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
       div[playerLaser].classList.add('laser')
       div[playerLaser+width].classList.remove('laser')
       console.log(playerLaserArray)
-      if(!checkCollision()) setTimeout(() => laserInterval(playerLaser), 30)
+      // checkBombLaserCollision()
+      if(!checkAlienLaserCollision()) setTimeout(() => laserInterval(playerLaser), 30)
     }           // GLITCHES IF YOU SHOOT INTO TOP RIGHT CORNER
   }
 
 
-  const alienBombArray = []
-  //Alien laser
-  function alienBomb() {
-    const rand = Math.ceil((Math.random() * alienArray.length))
-    let alienBomb = alienArray[rand]
-    const bombInt = setInterval(function() {
-      alienBomb += width
-      if (alienBomb > width*width) {
-        div[alienBomb-width].classList.remove('bomb')
-        clearInterval(bombInt)
-      } else {
-        alienBombArray.push(alienBomb)
-        if (alienBombArray.length > 1) {
-          alienBombArray.splice(alienBomb.length-1, 1)  //removes the previous position of bomb bombArray
-        }
-        div[alienBomb].classList.add('bomb')            //think this creates error if bomb meets a bomb. do while loop?
-        div[alienBomb-width].classList.remove('bomb')
-        checkBombHit()
-        console.log(alienBombArray)
-      }
-    }, 50)
-  }
-
-  function checkBombHit() {
-    for (let i = 0; i < alienBombArray.length; i++) {
-      if (alienBombArray[i] === playerIndex) {
-        playerLives--
-        updateHeading()
-        console.log('hit')
-        console.log(playerLives)
-        if (playerLives === 0) {
-          endgameLose()
-        }
-      }
-    }
-  }
-
-  // probability of shooting- get math rand and times by ten. set difficulty at top of page,1 easiest, 10 hardest. if the randomly genrated number if less than diffucutly, get and alien to shoot.
-
+  // *************************** ALIEN MOVEMENT *********************************
 
   //Creates alien rows. Called in init function.
   function createRow(startIndex) {
@@ -109,31 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
       alienArray.push(startIndex)
       startIndex += 2
     }
-  }
-
-  // Game loop. Puts main componenet of the game on a timer
-  function gameLoop() {
-    gameId = setInterval(function() {
-      if(changeDirection){               //starts as false so these if options are skipped
-        moveAlien('down')
-        if(direction ==='left'){
-          direction ='right'
-        }else{
-          direction ='left'
-        }
-        changeDirection = false
-      }else{
-        moveAlien(direction)        //this starts the directions. it is set to 'right' at the top intiially
-        alienBoundary()                //this check alien boundaries and see whether to change direction
-        endgameWin()
-        endgameLose()
-        alienBomb()
-        if (endgameLose() === true) {
-          console.log('endgame true')
-          //CLEAR THE interval TO STOP THIS CODE FROM RUNNING
-        }
-      }
-    }, 200)
   }
 
   function alienBoundary() {
@@ -171,13 +109,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  //Sets the display whist the game is in play
-  function updateHeading() {
-    document.querySelector('.aliensLeft').innerText = `There are ${alienArray.length -1} aliens remaining and you have ${playerLives} lives left!`
+  // *************************** ALIEN BOMB *********************************
+
+  //Alien Bomb
+  function alienBomb() {
+    const rand = Math.ceil((Math.random() * alienArray.length))
+    let alienBomb = alienArray[rand]
+    const bombInt = setInterval(function() {
+      alienBomb += width
+      if (alienBomb > width*width) {                  // if the bomb goes of the page, remove
+        div[alienBomb-width].classList.remove('bomb')
+        clearInterval(bombInt)
+      } else {
+        alienBombArray.push(alienBomb)
+        if (alienBombArray.length > 1) {           // I dont want this. need each bomb to have their position
+          alienBombArray.splice(alienBomb.length-1, 1)  //removes the previous position of bomb bombArray
+        }
+        div[alienBomb].classList.add('bomb')            //think this creates error if bomb meets a bomb. do while loop?
+        div[alienBomb-width].classList.remove('bomb')
+        checkBombHit()
+        console.log(alienBombArray)
+      }
+    }, 300)
   }
 
-  //Checks the collision between lasers and aliens
-  function checkCollision() {
+
+  // *************************** COLLISION CHECKS *********************************
+
+  // Checks whether a bomb has hit the player
+  function checkBombHit() {
+    for (let i = 0; i < alienBombArray.length; i++) {
+      if (alienBombArray[i] === playerIndex) {
+        playerLives--
+        updateHeading()
+        console.log('hit')
+        console.log(playerLives)
+        if (playerLives === 0) {
+          endgameLose()
+        }
+      }
+    }
+  }
+
+  //Checks whether a laser has hit an alien
+  function checkAlienLaserCollision() {
     for (let i = 0; i < alienArray.length; i++) {
       for (let j = 0; j < playerLaserArray.length; j++) {
         if (alienArray[i] === playerLaserArray[j]) {
@@ -193,6 +168,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     return false
   }
+
+  // //Checks if a laser and bomb have collided DOESNT WORK
+  // function checkBombLaserCollision(){
+  //   for (let i = 0; i < playerLaserArray.length; i++) {
+  //     for (let j = 0; j < alienBombArray.length; j++) {
+  //       if (playerLaserArray[i] === alienBombArray[j]) {
+  //         console.log('hit')
+  //       }
+  //     }
+  //   }
+  // }
+
+  // probability of shooting- get math rand and times by ten. set difficulty at top of page,1 easiest, 10 hardest. if the randomly genrated number if less than diffucutly, get and alien to shoot.
+
+
+  //****************************** ENDGAMES **************************************
 
   // Shows the score if the player wins by defeating all the aliens
   function endgameWin() {
@@ -218,6 +209,44 @@ document.addEventListener('DOMContentLoaded', () => {
         return true
       }
     }
+  }
+
+  //*************************** GAMELOOP, INIT AND DISPLAY **********************************
+
+  // Game loop. Puts main component of the game on a timer
+  function gameLoop() {
+    gameId = setInterval(function() {
+      if(changeDirection){               //starts as false so these if options are skipped
+        moveAlien('down')
+        if(direction ==='left'){
+          direction ='right'
+        }else{
+          direction ='left'
+        }
+        changeDirection = false
+      }else{
+        moveAlien(direction)        //this starts the directions. it is set to 'right' at the top intiially
+        alienBoundary()                //this check alien boundaries and see whether to change direction
+        endgameWin()
+        endgameLose()
+        alienBomb()
+        if (endgameLose() === true) {
+          console.log('endgame true')
+          //CLEAR THE interval TO STOP THIS CODE FROM RUNNING
+        }
+      }
+    }, 1000)
+  }
+
+  // Creates divs that make up the grid. Called in init function.
+  function addDivs() {
+    const newDiv = document.createElement('div')
+    grid.appendChild(newDiv)
+  }
+
+  //Sets the display whist the game is in play
+  function updateHeading() {
+    document.querySelector('.aliensLeft').innerText = `There are ${alienArray.length -1} aliens remaining and you have ${playerLives} lives left!`
   }
 
   //init
