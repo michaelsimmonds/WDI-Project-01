@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let prevIndex
   let playerIndex
   const playerLaserArray = []
-  const alienArray =  []
+  let alienArray =  []
   const aliensInRow = 7
   let score = 0
   let direction = 'right'
@@ -14,9 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let playerLives = 3
   let level = 1
   const alienBombArray = []
-  let gameLoopSpeed = 400
+  let gameLoopSpeed = 350
   const display = document.querySelector('.display')
-  const resultArea = document.querySelector('.result')
   const levelArea = document.querySelector('.level')
   const scoreArea = document.querySelector('.score')
 
@@ -155,9 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < alienArray.length; i++) {
       for (let j = 0; j < playerLaserArray.length; j++) {
         if (alienArray[i] === playerLaserArray[j]) {
-          score += 100 * (level/2)
-          console.log(score)
-          //idea for score- time the whole thing and divide by score to get ultimate score. longer you take, lower the score
+          score += Math.floor(10 * (level/2))
           updateHeading()
           div[alienArray[i]].classList.remove('alien')
           div[playerLaserArray[j]].classList.remove('laser')
@@ -191,10 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       gameLoop()
       level += 1
-      if (level > 8) level = 8
       levelArea.innerText = `Level: ${level}`
-      gameLoopSpeed -= 50
-      console.log(gameLoopSpeed)
+      if (level < 8) gameLoopSpeed -= 50
     }
   }
 
@@ -206,8 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i=0; i < div.length; i++) {
           if(div[i].className === 'alien') div[i].classList.remove('alien')          //if any div has class alien, remove it
         }
+        alienArray = []
+        //Why are aliens still there but invisible?????????????. need to clear array
         updateHeading()
-        if (alienArray[i] > (width*width) - (width*2)) display.innerText = 'You survived but the aliens invaded...'
+        if (alienArray[i] > (width*width) - (width*2)) display.innerText = 'Saving yourself eh? You survived but the aliens invaded...'
         if (playerLives === 0) display.innerText = 'You ran out of lives...'
         scoreArea.innerText = `You scored ${score}. ${endgameComment()}`
       }
@@ -215,10 +212,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function endgameComment() {
-    if (level === 1 || level === 2) return 'Terrible outcome in humanity\'s last stand'
-    if (level === 3 || level === 4) return
-    if (level === 5 || level === 6) return ''
-    if (level === 7 || level === 8) return 'How did you survive so long?!'
+    if (level === 1 || level === 2) return 'Terrible effort. Humanity\'s doomed.'
+    if (level === 3 || level === 4) return 'Not bad but the future looks bleak'
+    if (level === 5 || level === 6) return 'Good work! You gave those aliens a run for their money'
+    if (level === 7 || level === 8) return 'How on earth did you survive so long?!'
   }
 
 
@@ -239,10 +236,10 @@ document.addEventListener('DOMContentLoaded', () => {
         else direction ='left'
         changeDirection = false
       } else {
-        moveAlien(direction)        //this starts the directions. it is set to 'right' at the top intiially
-        alienBoundary()                //this check alien boundaries and see whether to change direction
         nextLevel()
         endgameLose()
+        moveAlien(direction)        //this starts the directions. it is set to 'right' at the top intiially
+        alienBoundary()                //this check alien boundaries and see whether to change direction
         checkFire()
       }
     }, gameLoopSpeed)
