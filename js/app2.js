@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const aliensInRow = 7
   let score = 0
   let direction = 'right'
-  let gameId
+  let moveCycle
   let changeDirection = false
   let playerLives = 3
   let level = 1
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       div[playerLaser+width].classList.remove('laser')
       // checkBombLaserCollision()
       if(!checkAlienLaserCollision()) setTimeout(() => laserInterval(playerLaser), 30)
-    }           // GLITCHES IF YOU SHOOT INTO TOP RIGHT CORNER
+    }
   }
 
 
@@ -155,10 +155,11 @@ document.addEventListener('DOMContentLoaded', () => {
       for (let j = 0; j < playerLaserArray.length; j++) {
         if (alienArray[i] === playerLaserArray[j]) {
           score += Math.floor(10 * (level/2))
-          updateHeading()
+          console.log(alienArray)
           div[alienArray[i]].classList.remove('alien')
           div[playerLaserArray[j]].classList.remove('laser')
           alienArray.splice(i, 1)
+          updateHeading()
           return true
         }
       }
@@ -166,15 +167,20 @@ document.addEventListener('DOMContentLoaded', () => {
     return false
   }
 
-  // //Checks if a laser and bomb have collided DOESNT WORK
+  //Checks if a laser and bomb have collided DOESNT WORK
   // function checkBombLaserCollision(){
   //   for (let i = 0; i < playerLaserArray.length; i++) {
   //     for (let j = 0; j < alienBombArray.length; j++) {
   //       if (playerLaserArray[i] === alienBombArray[j]) {
-  //         console.log('hit')
+  //         console.log('bomb laser')
+  //         div[alienBombArray[i]].classList.remove('bomb')
+  //         div[playerLaserArray[j]].classList.remove('laser')
+  //         console.log('bomb laser 2')
+  //         return true
   //       }
   //     }
   //   }
+  //   return false
   // }
 
   //****************************** ENDGAMES **************************************
@@ -182,10 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Shows the score if the player wins by defeating all the aliens
   function nextLevel() {
     if (alienArray.length === 0) {
-      clearInterval(gameId)
+      clearInterval(moveCycle)
       for (let i=0; i < div.length; i++) {
-        if(div[i].className === 'bomb') div[i].classList.remove('bomb')          //if any div has class alien, remove it
+        if(div[i].className === 'bomb') div[i].classList.remove('bomb')
       }
+      display.innerText = `There are ${alienArray.length} aliens remaining and you have ${playerLives} lives left!`
       gameLoop()
       level += 1
       levelArea.innerText = `Level: ${level}`
@@ -196,17 +203,18 @@ document.addEventListener('DOMContentLoaded', () => {
   function endgameLose() {
     for (let i = 0; i < alienArray.length; i++) {
       if (alienArray[i] > (width*width) - (width*2) || playerLives === 0) {
-        //THERE'S A GLITCH WHERE IF AN ALIEN HAS SHOT IT DOESNT DISAPPEAR
-        clearInterval(gameId)
-        for (let i=0; i < div.length; i++) {
-          if(div[i].className === 'alien') div[i].classList.remove('alien')          //if any div has class alien, remove it
-        }
-        alienArray = []
-        //Why are aliens still there but invisible?????????????. need to clear array
+        //THERE'S A GLITCH WHERE IF AN ALIEN HAS SHOTthe shot IT DOESNT DISAPPEAR
+        clearInterval(moveCycle)
         updateHeading()
         if (alienArray[i] > (width*width) - (width*2)) display.innerText = 'Saving yourself eh? You survived but the aliens invaded...'
         if (playerLives === 0) display.innerText = 'You ran out of lives...'
         scoreArea.innerText = `You scored ${score}. ${endgameComment()}`
+        alienArray = []
+        document.querySelector('.player').classList.remove('bomb')
+        for (let i=0; i < div.length; i++) {
+          if(div[i].className === 'alien') div[i].classList.remove('alien')          //if any div has class alien, remove it
+          if(div[i].className === 'bomb') div[i].classList.remove('bomb')
+        }
       }
     }
   }
@@ -229,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     createRow(62)
     createRow(83)
     createRow(102)
-    gameId = setInterval(function() {
+    moveCycle = setInterval(function() {
       if(changeDirection){               //starts as false so these if options are skipped
         moveAlien('down')
         if(direction ==='left') direction ='right'
@@ -253,10 +261,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //Sets the display whist the game is in play
   function updateHeading() {
-    display.innerText = `There are ${alienArray.length -1} aliens remaining and you have ${playerLives} lives left!`
+    display.innerText = `There are ${alienArray.length} aliens remaining and you have ${playerLives} lives left!`
   }
 
-  //init
+  //init. Creates grid and places player. Then initialises gameloop.
   function init() {
     for (let i = 0; i < width * width; i++) addDivs()
     div = document.querySelectorAll('div')
