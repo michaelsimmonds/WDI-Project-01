@@ -58,8 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (playerLaserArray.length > 1) playerLaserArray.splice(playerLaser.length-1, 1)  //removes the previous position of laser in playerLaserArray
       div[playerLaser].classList.add('laser')
       div[playerLaser+width].classList.remove('laser')
-      // checkBombLaserCollision()
-      if(!checkAlienLaserCollision()) setTimeout(() => laserInterval(playerLaser), 30)
+      checkBombLaserCollision()
+      if(!checkAlienLaserCollision()) setTimeout(() => laserInterval(playerLaser), 41)
     }
   }
 
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
           checkBombHit()
         }
       }
-    }, 100)
+    }, 79)
   }
 
   // there is a glitch that the alien class appears behind the bomb square after if it is shot
@@ -155,7 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
       for (let j = 0; j < playerLaserArray.length; j++) {
         if (alienArray[i] === playerLaserArray[j]) {
           score += Math.floor(10 * (level/2))
-          console.log(alienArray)
           div[alienArray[i]].classList.remove('alien')
           div[playerLaserArray[j]].classList.remove('laser')
           alienArray.splice(i, 1)
@@ -167,21 +166,21 @@ document.addEventListener('DOMContentLoaded', () => {
     return false
   }
 
-  //Checks if a laser and bomb have collided DOESNT WORK
-  // function checkBombLaserCollision(){
-  //   for (let i = 0; i < playerLaserArray.length; i++) {
-  //     for (let j = 0; j < alienBombArray.length; j++) {
-  //       if (playerLaserArray[i] === alienBombArray[j]) {
-  //         console.log('bomb laser')
-  //         div[alienBombArray[i]].classList.remove('bomb')
-  //         div[playerLaserArray[j]].classList.remove('laser')
-  //         console.log('bomb laser 2')
-  //         return true
-  //       }
-  //     }
-  //   }
-  //   return false
-  // }
+  // Checks if a laser and bomb have collided DOESNT WORK
+  function checkBombLaserCollision(){
+    for (let i = 0; i < playerLaserArray.length; i++) {
+      for (let j = 0; j < alienBombArray.length; j++) {
+        if (playerLaserArray[i] === alienBombArray[j] || playerLaserArray[i] === alienBombArray[j] + width) {
+          console.log('bomb laser')
+          div[alienBombArray[i]].classList.remove('bomb')
+          div[playerLaserArray[j]].classList.remove('laser')
+          console.log('bomb laser 2')
+          // return true
+        }
+      }
+    }
+    // return false
+  }
 
   //****************************** ENDGAMES **************************************
 
@@ -206,9 +205,9 @@ document.addEventListener('DOMContentLoaded', () => {
         //THERE'S A GLITCH WHERE IF AN ALIEN HAS SHOTthe shot IT DOESNT DISAPPEAR
         clearInterval(moveCycle)
         updateHeading()
-        if (alienArray[i] > (width*width) - (width*2)) display.innerText = 'Saving yourself eh? You survived but the aliens invaded...'
+        if (alienArray[i] > (width*width) - (width*2)) display.innerText = 'Saving yourself, eh? You survived but the aliens invaded...'
         if (playerLives === 0) display.innerText = 'You ran out of lives...'
-        scoreArea.innerText = `You scored ${score}. ${endgameComment()}`
+        scoreArea.innerText = `You scored ${score} - ${endgameComment()}`
         alienArray = []
         document.querySelector('.player').classList.remove('bomb')
         for (let i=0; i < div.length; i++) {
@@ -220,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function endgameComment() {
-    if (level === 1 || level === 2) return 'Terrible effort. Humanity\'s doomed.'
+    if (level === 1 || level === 2) return 'Terrible. Humanity\'s doomed.'
     if (level === 3 || level === 4) return 'Not bad but the future looks bleak'
     if (level === 5 || level === 6) return 'Good work! You gave those aliens a run for their money'
     if (level === 7 || level === 8) return 'How on earth did you survive so long?!'
@@ -231,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Game loop. Puts main component of the game on a timer
   function gameLoop() {
+    hideButton()
     display.innerText = `There are 35 aliens remaining and you have ${playerLives} lives left!`
     createRow(22)
     createRow(43)
@@ -270,9 +270,17 @@ document.addEventListener('DOMContentLoaded', () => {
     div = document.querySelectorAll('div')
     playerIndex = (div.length-1) - (width*1.5)
     div[playerIndex].classList.add('player')
-    gameLoop()
+    // gameLoop()
+  }
+
+  const startButton = document.querySelector('.startButton')
+  const startScreen = document.querySelector('.startScreen')
+  function hideButton() {
+    startScreen.style.display = 'none'
   }
 
   init()
+
+  startButton.addEventListener('click', gameLoop)
 
 })

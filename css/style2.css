@@ -29,6 +29,19 @@ h2 {
   max-width: 600px;
 }
 
+.startScreen {
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column-reverse;
+}
+
 .grid div {
   flex-grow: 1;
   height: 5%;
