@@ -9,6 +9,7 @@ body {
   height: 100vh;
   justify-content: center;
   margin: 0;
+  font-family: Courier, monospace;
 }
 
 h1, h2 {
@@ -32,6 +33,7 @@ h2 {
 .startScreen {
   width: 100vw;
   height: 100vh;
+  color: white;
   background: black;
   position: absolute;
   top: 0;
@@ -39,7 +41,7 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column-reverse;
+  flex-direction: column;
 }
 
 .grid div {
@@ -63,4 +65,14 @@ h2 {
 
 .bomb {
   background-color: gold;
+}
+
+.startButton {
+  height: 100px;
+  width: 100px;
+  margin: 10px;
+  border-radius: 50%;
+  font-family: Courier, monospace;
+  font-size: 16px;
+  outline: none;
 }
