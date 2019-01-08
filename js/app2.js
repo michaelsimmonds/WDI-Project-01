@@ -14,8 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let playerLives = 3
   let level = 1
   const alienBombArray = []
-  let gameLoopSpeed = 100
+  let gameLoopSpeed = 400
   const resultArea = document.querySelector('.result')
+  const levelArea = document.querySelector('.level')
 
   // *************************** PLAYER MOVEMENT AND ACTION *********************************
 
@@ -152,7 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < alienArray.length; i++) {
       for (let j = 0; j < playerLaserArray.length; j++) {
         if (alienArray[i] === playerLaserArray[j]) {
-          score += 1000
+          score += 100 * (level/2)
+          console.log(score)
           //idea for score- time the whole thing and divide by score to get ultimate score. longer you take, lower the score
           updateHeading()
           div[alienArray[i]].classList.remove('alien')
@@ -190,7 +192,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       gameLoop()
       level += 1
-      gameLoopSpeed -= 100
+      levelArea.innerText = `Level: ${level}`
+      gameLoopSpeed -= 50
+      console.log(gameLoopSpeed)
     }
   }
 
