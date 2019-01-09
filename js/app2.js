@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let changeDirection = false
   let playerLives = 3
   let level = 1
-  let gameLoopSpeed = 350
+  let gameLoopSpeed = 400
   let div
   let prevIndex
   let playerIndex
@@ -120,33 +120,32 @@ document.addEventListener('DOMContentLoaded', () => {
   //Alien Bomb
   function alienBomb() {
     const rand = Math.floor((Math.random() * alienArray.length))
-    let alienBomb = alienArray[rand] + width
+    let alienBomb = alienArray[rand]
     const bombInt = setInterval(function() {
+      checkBombHit()
+      // if (checkBombHit() === true) clearInterval(bombInt)
       alienBomb += width
       if (alienBomb > width*width) {                    // if the bomb goes of the page, remove
         div[alienBomb-width].classList.remove('bomb')
+        // console.log(alienBombArray.find(alienBomb))
+        // alienBombArray.splice(, 1)
         clearInterval(bombInt)
       } else {
         alienBombArray.push(alienBomb)
-        // if (alienBomb > (width*width) - width) {        // i.e. if alien bomb is in last line
-        //   div[alienBomb -width].classList.remove('bomb')
-        //   alienBombArray.splice(div[alienBomb], 1)
-        //   console.log(div[alienBomb -width])
-        //   console.log(alienBomb)
-        // }
-        // checkBombHit()
+
         if (alienBombArray.length > 1) {                // Do I want this??? need each bomb to have their position
-          alienBombArray.splice(alienBomb.length-1, 1)  //removes the previous position of bomb bombArray
+          alienBombArray.splice(alienBomb.length, 1)  //removes the previous position of bomb bombArray
         }
-        if (alienArray.length > 0) {
-          div[alienBomb].classList.add('bomb')
-          // console.log('works')
-          div[alienBomb-width].classList.remove('bomb')
-          // checkBombHit()
-        }
-        checkBombHit()
+        // if (alienArray.length > 0) {
+        div[alienBomb].classList.add('bomb')
+        // console.log(div[alienBomb])
+        div[alienBomb-width].classList.remove('bomb')
+        // checkBombHit()
+        // }
+
+        console.log(alienBombArray)
       }
-    }, 79)
+    }, 200)
   }
 
   // *************************** COLLISION CHECKS ******************************
@@ -157,8 +156,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (alienBombArray[i] === playerIndex) {
         playerLives--
         updateHeading()
+        console.log(alienBombArray[i])
+        console.log(div[playerIndex].classList)
+        // alienBombArray.splice(playerIndex, )
+        div[playerIndex].classList.remove('bomb')
+        console.log(div[playerIndex])
+        console.log(div[alienBombArray[i]].classList.remove('bomb'))
         if (playerLives === 0) endgameLose()
-      }
+        return true
+      } else false
     }
   }
 
@@ -198,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Shows the score if the player wins by defeating all the aliens
   function nextLevel() {
     if (alienArray.length === 0) {
-      document.querySelector('.player').classList.remove('player', 'bomb')
+      boardReset()
       clearInterval(moveCycle)
       display.innerText = `There are ${alienArray.length} aliens remaining and you have ${playerLives} lives left!`
       level += 1
@@ -233,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startButton.focus() // this doesnt do anything
         alienArray = []
         level = 1
-        gameLoopSpeed = 350
+        gameLoopSpeed = 400
         boardReset()
         startScreen.style.display = 'flex'
         playerLives = 3

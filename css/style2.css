@@ -9,13 +9,21 @@ body {
   height: 100vh;
   justify-content: center;
   margin: 0;
-  font-family: Courier, monospace;
+  font-family: 'lato',sans-serif;
+  background-image: url('https://media.giphy.com/media/DC5oGBcCa81Lg2FaJ2/giphy.gif');
+  background-size: center;
+  background-position: center;
+}
+
+h1 {
+  font-size: 40px;
 }
 
 h1, h2 {
   display: inline;
-  font-size: 30px;
   text-align: center;
+  color: white;
+  font-weight: 900;
 }
 
 h2 {
@@ -42,8 +50,12 @@ h2 {
   left: 0;
   display: flex;
   justify-content: center;
+  text-align: center;
   align-items: center;
   flex-direction: column;
+  background-image: url('https://d2v9y0dukr6mq2.cloudfront.net/video/thumbnail/VOENE67sxikxs86k8/slow-pan-shot-to-earth-from-space-clip-contains-earth-space-florida-bahamas-caribbean-cuba-sun-planet-atmosphere-ocean-images-from-nasa_roeagqdol__F0006.png');
+  background-size: cover;
+  background-position: center;
 }
 
 .grid div {
@@ -51,6 +63,10 @@ h2 {
   height: 5%;
   width: 5%;
   border: 1px solid lightblue;
+}
+
+.bomb {
+  background-color: gold;
 }
 
 .player {
@@ -65,20 +81,16 @@ h2 {
   background-color: green
 }
 
-.bomb {
-  background-color: gold;
-}
-
-
 .startButton {
   height: 100px;
   width: 100px;
   margin: 10px;
   border-radius: 50%;
-  font-family: Courier, monospace;
+  font-family: 'lato',sans-serif;
   font-size: 16px;
   outline: none;
-  margin: 30px;
+  margin: 30px 0 200px 0;
   font-weight: 900;
-  color: #3F69AA;
+  color: black;
+  justify-content: center;
 }
