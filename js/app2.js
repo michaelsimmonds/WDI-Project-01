@@ -128,19 +128,26 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(bombInt)
       } else {
         alienBombArray.push(alienBomb)
+        // if (alienBomb > (width*width) - width) {        // i.e. if alien bomb is in last line
+        //   div[alienBomb -width].classList.remove('bomb')
+        //   alienBombArray.splice(div[alienBomb], 1)
+        //   console.log(div[alienBomb -width])
+        //   console.log(alienBomb)
+        // }
+        // checkBombHit()
         if (alienBombArray.length > 1) {                // Do I want this??? need each bomb to have their position
           alienBombArray.splice(alienBomb.length-1, 1)  //removes the previous position of bomb bombArray
         }
         if (alienArray.length > 0) {
           div[alienBomb].classList.add('bomb')
+          // console.log('works')
           div[alienBomb-width].classList.remove('bomb')
-          checkBombHit()
+          // checkBombHit()
         }
+        checkBombHit()
       }
     }, 79)
   }
-
-  // there is a glitch that the alien class appears behind the bomb square after if it is shot
 
   // *************************** COLLISION CHECKS ******************************
 
@@ -191,15 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Shows the score if the player wins by defeating all the aliens
   function nextLevel() {
     if (alienArray.length === 0) {
-      for (let i=0; i < div.length; i++) {
-        if(div[i].className === 'bomb') div[i].classList.remove('bomb')
-        if(div[i].className === 'laser') div[i].classList.remove('laser')
-        if(div[i].className === 'player') div[i].classList.remove('player')
-      }
+      document.querySelector('.player').classList.remove('player', 'bomb')
       clearInterval(moveCycle)
       display.innerText = `There are ${alienArray.length} aliens remaining and you have ${playerLives} lives left!`
       level += 1
-      levelArea.innerText = `Level: ${level}`
       if (level < 8) gameLoopSpeed -= 50
       startScreen.style.display = 'flex'
       document.querySelector('.startScreen h1').innerText = `Level ${level}`
@@ -230,11 +232,9 @@ document.addEventListener('DOMContentLoaded', () => {
         startButton.innerText = 'Play again'
         startButton.focus() // this doesnt do anything
         alienArray = []
-        for (let i=0; i < div.length; i++) {
-          if(div[i].className === 'alien') div[i].classList.remove('alien')
-          if(div[i].className === 'bomb') div[i].classList.remove('bomb')
-        }
-        document.querySelector('.player').classList.remove('bomb')
+        level = 1
+        gameLoopSpeed = 350
+        boardReset()
         startScreen.style.display = 'flex'
         playerLives = 3
       }
@@ -253,8 +253,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Game loop. Hides start screen, generates in-game-display and aliens, and puts main component of the game on a timer
   function gameLoop() {
     hideStartScreen()
+    boardReset()
     placePlayer()
     display.innerText = `There are 35 aliens remaining and you have ${playerLives} lives left!`
+    levelArea.innerText = `Level: ${level}`
     createRow(22)
     createRow(43)
     createRow(62)
@@ -302,6 +304,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function addDivs() {
     const newDiv = document.createElement('div')
     grid.appendChild(newDiv)
+  }
+
+  function boardReset() {
+    for (let i = 0; i < div.length; i++) {
+      if(div[i].className === 'laser') div[i].classList.remove('laser',)
+      if(div[i].className === 'alien') div[i].classList.remove('alien')
+      if(div[i].className === 'bomb') div[i].classList.remove('bomb')
+      if(div[i].classList.contains('player')) div[i].classList.remove('alien', 'laser', 'player')
+    }
   }
 
   init()
