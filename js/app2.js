@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   //******************************* VARIABLES **********************************
+
   const grid = document.querySelector('.grid')
   const width = 20 // cant change this at the mo- doesn't display properly
   const display = document.querySelector('.display')
@@ -29,13 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handles the keys
   document.onkeydown = function(e) {
     prevIndex = playerIndex
-    if (e.keyCode === 37 && playerIndex > div.length - width*2) {
+    if (e.keyCode === 37 && playerIndex > div.length - width*2) {               //Left arrow
       playerIndex--
       movePlayer(playerIndex, prevIndex)
-    } else if (e.keyCode === 39 && playerIndex < (div.length-width)-1) {
+    } else if (e.keyCode === 39 && playerIndex < (div.length-width)-1) {        //Right arrow
       playerIndex++
       movePlayer(playerIndex, prevIndex)
-    } else if (e.keyCode === 32) {
+    } else if (e.keyCode === 32) {                                              //Space bar
       shootPlayerLaser(playerIndex)
     }
   }
@@ -176,10 +177,10 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < playerLaserArray.length; i++) {
       for (let j = 0; j < alienBombArray.length; j++) {
         if (playerLaserArray[i] === alienBombArray[j] || playerLaserArray[i] === alienBombArray[j] + width) {
-          console.log('bomb laser')
+          // console.log('bomb laser')
           div[alienBombArray[i]].classList.remove('bomb')
           div[playerLaserArray[j]].classList.remove('laser')
-          console.log('bomb laser 2')
+          // console.log('bomb laser 2')
         }
       }
     }
@@ -190,15 +191,28 @@ document.addEventListener('DOMContentLoaded', () => {
   // Shows the score if the player wins by defeating all the aliens
   function nextLevel() {
     if (alienArray.length === 0) {
-      clearInterval(moveCycle)
       for (let i=0; i < div.length; i++) {
         if(div[i].className === 'bomb') div[i].classList.remove('bomb')
+        if(div[i].className === 'laser') div[i].classList.remove('laser')
+        if(div[i].className === 'player') div[i].classList.remove('player')
       }
+      clearInterval(moveCycle)
       display.innerText = `There are ${alienArray.length} aliens remaining and you have ${playerLives} lives left!`
-      gameLoop()
       level += 1
       levelArea.innerText = `Level: ${level}`
       if (level < 8) gameLoopSpeed -= 50
+      startScreen.style.display = 'flex'
+      document.querySelector('.startScreen h1').innerText = `Level ${level}`
+      document.querySelector('.startScreen h2').innerText = ''
+      startButton.style.display = 'none'
+      let timeRemaining = 1
+      const countdown = setInterval(() => {
+        timeRemaining--
+        if (timeRemaining < 0) {
+          clearInterval(countdown)
+          gameLoop()
+        }
+      }, 1000)
     }
   }
 
@@ -212,11 +226,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (playerLives === 0) outcome = 'You ran out of lives...'
         document.querySelector('.startScreen h1').innerText = `${outcome}`
         document.querySelector('.startScreen h2').innerText = `You scored ${score} - ${endgameComment()}`
+        startButton.style.display = 'flex'
+        startButton.innerText = 'Play again'
+        startButton.focus() // this doesnt do anything
         alienArray = []
         for (let i=0; i < div.length; i++) {
           if(div[i].className === 'alien') div[i].classList.remove('alien')
           if(div[i].className === 'bomb') div[i].classList.remove('bomb')
         }
+        document.querySelector('.player').classList.remove('bomb')
         startScreen.style.display = 'flex'
         playerLives = 3
       }
@@ -230,12 +248,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (level === 7 || level === 8) return 'How on earth did you survive so long?!'
   }
 
-
   //*************************** GAMELOOP, INIT AND DISPLAY *********************
 
   // Game loop. Hides start screen, generates in-game-display and aliens, and puts main component of the game on a timer
   function gameLoop() {
-    startScreen.style.display = 'none'
+    hideStartScreen()
+    placePlayer()
     display.innerText = `There are 35 aliens remaining and you have ${playerLives} lives left!`
     createRow(22)
     createRow(43)
@@ -243,17 +261,17 @@ document.addEventListener('DOMContentLoaded', () => {
     createRow(83)
     createRow(102)
     moveCycle = setInterval(function() {
-      if(changeDirection){               //starts as false so these if options are skipped
+      if(changeDirection){          //starts as false so these if options are skipped
         moveAlien('down')
         if(direction ==='left') direction ='right'
         else direction ='left'
         changeDirection = false
       } else {
+        moveAlien(direction)        //this starts the directions. it is set to 'right' at the top intiially
+        alienBoundary()             //this check alien boundaries and see whether to change direction
+        checkFire()                 //initiates alien bomb
         nextLevel()
         endgameLose()
-        moveAlien(direction)        //this starts the directions. it is set to 'right' at the top intiially
-        alienBoundary()                //this check alien boundaries and see whether to change direction
-        checkFire()
       }
     }, gameLoopSpeed)
   }
@@ -263,19 +281,27 @@ document.addEventListener('DOMContentLoaded', () => {
     display.innerText = `There are ${alienArray.length} aliens remaining and you have ${playerLives} lives left!`
   }
 
+  //Hide startScreen
+  function hideStartScreen() {
+    startScreen.style.display = 'none'
+  }
+
+  function placePlayer() {
+    playerIndex = (div.length-1) - (width*1.5)
+    div[playerIndex].classList.add('player')
+  }
+
+  //Creates grid and initialises gameloop.
+  function init() {
+    for (let i = 0; i < width * width; i++) addDivs()
+    div = document.querySelectorAll('div')
+    startButton.addEventListener('click', gameLoop)
+  }
+
   // Creates divs that make up the grid. Called in init function.
   function addDivs() {
     const newDiv = document.createElement('div')
     grid.appendChild(newDiv)
-  }
-
-  //init. Creates grid and places player. Then initialises gameloop.
-  function init() {
-    for (let i = 0; i < width * width; i++) addDivs()
-    div = document.querySelectorAll('div')
-    playerIndex = (div.length-1) - (width*1.5)
-    div[playerIndex].classList.add('player')
-    startButton.addEventListener('click', gameLoop)
   }
 
   init()
