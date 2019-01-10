@@ -15,9 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let score = 0
   let direction = 'right'
   let changeDirection = false
-  let playerLives = 3
+  let playerLives = 10
   let level = 1
-  let gameLoopSpeed = 400
+  let gameLoopSpeed = 300
   let div
   let prevIndex
   let playerIndex
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Handles movement of player laser. Is called in function to handle keys
   function shootPlayerLaser(startPoint) {               //startpoint is retrieved from player pos when spacebar pressed
-    setTimeout(() => laserInterval(startPoint), 100)
+    setTimeout(() => laserInterval(startPoint), 50)
   }
 
   // Player shoots a laser
@@ -65,8 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (playerLaserArray.length > 1) playerLaserArray.splice(playerLaser.length-1, 1)  //removes the previous position of laser in playerLaserArray
       div[playerLaser].classList.add('laser')
       div[playerLaser+width].classList.remove('laser')
-      // checkBombLaserCollision()
-      if(!checkAlienLaserCollision()) setTimeout(() => laserInterval(playerLaser), 41)
+      if(!checkAlienLaserCollision()) setTimeout(() => laserInterval(playerLaser), 50)
     }
   }
 
@@ -118,15 +117,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (random < 0.5) alienBomb()
   }
 
-  //Pick a random alien
-
   //Alien Bomb
   function alienBomb() {
     const rand = Math.floor((Math.random() * alienArray.length))
     let alienBomb = alienArray[rand]
     const bombInt = setInterval(function() {
+      console.log(alienBombArray)
       checkBombHit()
-      // if (checkBombHit() === true) clearInterval(bombInt)
       alienBomb += width
       if (alienBomb > width*width) {                    // if the bomb goes of the page, remove
         div[alienBomb-width].classList.remove('bomb')
@@ -140,9 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
           div[alienBomb].classList.add('bomb')
           div[alienBomb-width].classList.remove('bomb')
         }
-        console.log(alienBombArray)
       }
-    }, 200)
+    }, 79)
   }
 
   // *************************** COLLISION CHECKS ******************************
@@ -151,14 +147,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function checkBombHit() {
     for (let i = 0; i < alienBombArray.length; i++) {
       if (alienBombArray[i] === playerIndex) {
+        div[playerIndex].classList.add('explosive')
+        explosion(playerIndex)
         playerLives--
         updateHeading()
-        console.log(alienBombArray[i])
-        console.log(div[playerIndex].classList)
-        // alienBombArray.splice(playerIndex, )
         div[playerIndex].classList.remove('bomb')
-        console.log(div[playerIndex])
-        console.log(div[alienBombArray[i]].classList.remove('bomb'))
+        // alienBombArray.splice(i, 1)
         if (playerLives === 0) endgameLose()
         return true
       } else false
@@ -170,9 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < alienArray.length; i++) {
       for (let j = 0; j < playerLaserArray.length; j++) {
         if (alienArray[i] === playerLaserArray[j]) {
+          const collisionIndex = alienArray[i]
+          console.log(collisionIndex)
+          div[collisionIndex].classList.add('explosive')
+          explosion(collisionIndex)
           score += Math.floor(10 * (level/2))
-          div[alienArray[i]].classList.remove('alien')
-          div[playerLaserArray[j]].classList.remove('laser')
+          div[collisionIndex].classList.remove('alien')
+          div[collisionIndex].classList.remove('laser')
           alienArray.splice(i, 1)
           updateHeading()
           return true
@@ -182,19 +180,23 @@ document.addEventListener('DOMContentLoaded', () => {
     return false
   }
 
-  // Checks if a laser and bomb have collided DOESNT WORK
-  // function checkBombLaserCollision(){
-  //   for (let i = 0; i < playerLaserArray.length; i++) {
-  //     for (let j = 0; j < alienBombArray.length; j++) {
-  //       if (playerLaserArray[i] === alienBombArray[j] || playerLaserArray[i] === alienBombArray[j] + width) {
-  //         // console.log('bomb laser')
-  //         div[alienBombArray[i]].classList.remove('bomb')
-  //         div[playerLaserArray[j]].classList.remove('laser')
-  //         // console.log('bomb laser 2')
-  //       }
-  //     }
-  //   }
-  // }
+  //************************** Explosion effect ********************************
+
+  let currentStep = 0
+  let explosionId
+
+  function explosion(collisionIndex){
+    if(currentStep === 15){
+      currentStep = 0
+      div[collisionIndex].classList.remove('explosive')
+      clearTimeout(explosionId)
+      div[collisionIndex].removeAttribute('data-step')
+    } else{
+      currentStep++
+      div[collisionIndex].dataset.explosion = currentStep
+      explosionId = setTimeout(() => explosion(collisionIndex), 10)
+    }
+  }
 
   //********************* LEVEL PROGRESSION AND ENDGAMES ***********************
 
@@ -205,9 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
       alienBombArray = []
       playerLaserArray = []
       clearInterval(moveCycle)
-      display.innerText = `There are ${alienArray.length} aliens remaining and you have ${playerLives} lives left!`
+      display.innerText = `There are ${alienArray.length} aliens remaining in this wave and you have ${playerLives} lives left!`
       level += 1
-      if (level < 8) gameLoopSpeed -= 50
+      if (level < 8) gameLoopSpeed -= 25
       startScreen.style.display = 'flex'
       document.querySelector('.startScreen h1').innerText = `Level ${level}`
       document.querySelector('.startScreen h2').innerText = ''
@@ -262,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
     hideStartScreen()
     boardReset()
     placePlayer()
-    display.innerText = `There are 35 aliens remaining and you have ${playerLives} lives left!`
+    display.innerText = `There are 35 aliens remaining in this wave and you have ${playerLives} lives left!`
     levelArea.innerText = `Level: ${level}`
     createRow(22)
     createRow(43)
@@ -276,18 +278,21 @@ document.addEventListener('DOMContentLoaded', () => {
         else direction ='left'
         changeDirection = false
       } else {
+        checkFire()                 //initiates alien bomb
         moveAlien(direction)        //this starts the directions. it is set to 'right' at the top intiially
         alienBoundary()             //this check alien boundaries and see whether to change direction
-        checkFire()                 //initiates alien bomb
         nextLevel()
         endgameLose()
+        for (let i = 0; i < div.length; i++) {
+          if(div[i].classList.contains('explosive')) div[i].classList.remove('explosive')
+        }
       }
     }, gameLoopSpeed)
   }
 
   //Sets the display whist the game is in play
   function updateHeading() {
-    display.innerText = `There are ${alienArray.length} aliens remaining and you have ${playerLives} lives left!`
+    display.innerText = `There are ${alienArray.length} aliens remaining in this wave and you have ${playerLives} lives left!`
   }
 
   //Hide startScreen

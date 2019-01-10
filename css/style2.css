@@ -76,14 +76,6 @@ h2 {
   background-size:cover;
 }
 
-.player {
-  background-image: url('../assets/player.png');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size:cover;
-  transform: rotate(90deg);
-}
-
 .alien {
   background-image: url('../assets/alienSpaceship.png');
   background-position: center;
@@ -111,4 +103,114 @@ h2 {
   font-weight: 900;
   color: black;
   justify-content: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.player {
+  background-image: url('../assets/player.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:cover;
+  transform: rotate(90deg);
+}
+
+
+
+
+
+
+
+.grid div.explosive{
+  background-image: url('../assets/explosion.png');
+  background-size: 500%;
+}
+
+.grid div.explosive[data-step="0"] {
+  background-position-x: 0;
+  background-position-y: 0;
+}
+
+.grid div.explosive[data-step="1"] {
+  background-position-x: calc(100%/3);
+  background-position-y: 0;
+}
+
+.grid div.explosive[data-step="2"] {
+  background-position-x: calc(200%/3);
+  background-position-y: 0;
+}
+
+.grid div.explosive[data-step="3"] {
+  background-position-x: 100%;
+  background-position-y: 0;
+}
+
+.grid div.explosive[data-step="4"] {
+  background-position-x: 0;
+  background-position-y: cacl(100%/3);
+}
+
+.grid div.explosive[data-step="5"] {
+  background-position-x: calc(100%3);
+  background-position-y: calc(100%3);
+}
+
+.grid div.explosive[data-step="6"] {
+  background-position-x: calc(200%3);
+  background-position-y: calc(100%3);
+}
+
+.grid div.explosive[data-step="7"] {
+  background-position-x: 100%;
+  background-position-y: calc(100%3);
+}
+
+.grid div.explosive[data-step="8"] {
+  background-position-x: 0;
+  background-position-y: calc(200%/3);
+}
+
+.grid div.explosive[data-step="9"] {
+  background-position-x: calc(100%/3);
+  background-position-y: calc(200%/3);
+}
+
+.grid div.explosive[data-step="10"] {
+  background-position-x: calc(200%/3);
+  background-position-y: calc(200%/3);
+}
+
+.grid div.explosive[data-step="11"] {
+  background-position-x: 100%;
+  background-position-y: calc(200%/3);
+}
+
+.grid div.explosive[data-step="12"] {
+  background-position-x: 0;
+  background-position-y: 100%;
+}
+
+.grid div.explosive[data-step="13"] {
+  background-position-x: calc(100%/3);
+  background-position-y: 100%;
+}
+
+.grid div.explosive[data-step="14"] {
+  background-position-x: calc(200%3);
+  background-position-y: 100%;
+}
+
+.grid div.explosive[data-step="15"] {
+  background-position-x: 100%;
+  background-position-y: 100%;
 }
