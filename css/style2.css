@@ -29,6 +29,7 @@ h1, h2 {
 h2 {
   margin: 10px;
 }
+
 .grid{
   align-items: center;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
@@ -36,8 +37,8 @@ h2 {
   flex-wrap: wrap;
   height: 100%;
   justify-content: center;
-  max-height: 600px;
-  max-width: 600px;
+  height: 600px;
+  width: 600px;
 }
 
 .startScreen, .levelDisplay {
@@ -58,27 +59,44 @@ h2 {
   background-position: center;
 }
 
+.grid {
+  border: 1px solid white;
+}
+
 .grid div {
   flex-grow: 1;
   height: 5%;
   width: 5%;
-  border: 1px solid lightblue;
 }
 
 .bomb {
-  background-color: gold;
+  background-image: url('../assets/alienLaser.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:cover;
 }
 
 .player {
-  background-color: #ccc;
+  background-image: url('../assets/player.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:cover;
+  transform: rotate(90deg);
 }
 
 .alien {
-  background-color: #f05;
+  background-image: url('../assets/alienSpaceship.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:cover;
 }
 
 .laser {
-  background-color: green
+  background-image: url('../assets/playerLaser.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:cover;
+  transform: rotate(270deg);
 }
 
 .startButton {

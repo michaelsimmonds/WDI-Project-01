@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const startButton = document.querySelector('.startButton')
   const startScreen = document.querySelector('.startScreen')
   const aliensInRow = 7
-  const playerLaserArray = []
-  const alienBombArray = []
+  let playerLaserArray = []
+  let alienBombArray = []
   let alienArray =  []
   let score = 0
   let direction = 'right'
@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
       shootPlayerLaser(playerIndex)
     }
   }
+  // put shoot as a separate function so you can shoot and move at the same time
 
   // Handles movement of player. Is called in function to handle keys
   function movePlayer(playerIndex, prevIndex){
@@ -64,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (playerLaserArray.length > 1) playerLaserArray.splice(playerLaser.length-1, 1)  //removes the previous position of laser in playerLaserArray
       div[playerLaser].classList.add('laser')
       div[playerLaser+width].classList.remove('laser')
-      checkBombLaserCollision()
+      // checkBombLaserCollision()
       if(!checkAlienLaserCollision()) setTimeout(() => laserInterval(playerLaser), 41)
     }
   }
@@ -117,6 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (random < 0.5) alienBomb()
   }
 
+  //Pick a random alien
+
   //Alien Bomb
   function alienBomb() {
     const rand = Math.floor((Math.random() * alienArray.length))
@@ -127,22 +130,16 @@ document.addEventListener('DOMContentLoaded', () => {
       alienBomb += width
       if (alienBomb > width*width) {                    // if the bomb goes of the page, remove
         div[alienBomb-width].classList.remove('bomb')
-        // console.log(alienBombArray.find(alienBomb))
-        // alienBombArray.splice(, 1)
         clearInterval(bombInt)
       } else {
         alienBombArray.push(alienBomb)
-
         if (alienBombArray.length > 1) {                // Do I want this??? need each bomb to have their position
           alienBombArray.splice(alienBomb.length, 1)  //removes the previous position of bomb bombArray
         }
-        // if (alienArray.length > 0) {
-        div[alienBomb].classList.add('bomb')
-        // console.log(div[alienBomb])
-        div[alienBomb-width].classList.remove('bomb')
-        // checkBombHit()
-        // }
-
+        if(div[alienBomb]){
+          div[alienBomb].classList.add('bomb')
+          div[alienBomb-width].classList.remove('bomb')
+        }
         console.log(alienBombArray)
       }
     }, 200)
@@ -186,18 +183,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Checks if a laser and bomb have collided DOESNT WORK
-  function checkBombLaserCollision(){
-    for (let i = 0; i < playerLaserArray.length; i++) {
-      for (let j = 0; j < alienBombArray.length; j++) {
-        if (playerLaserArray[i] === alienBombArray[j] || playerLaserArray[i] === alienBombArray[j] + width) {
-          // console.log('bomb laser')
-          div[alienBombArray[i]].classList.remove('bomb')
-          div[playerLaserArray[j]].classList.remove('laser')
-          // console.log('bomb laser 2')
-        }
-      }
-    }
-  }
+  // function checkBombLaserCollision(){
+  //   for (let i = 0; i < playerLaserArray.length; i++) {
+  //     for (let j = 0; j < alienBombArray.length; j++) {
+  //       if (playerLaserArray[i] === alienBombArray[j] || playerLaserArray[i] === alienBombArray[j] + width) {
+  //         // console.log('bomb laser')
+  //         div[alienBombArray[i]].classList.remove('bomb')
+  //         div[playerLaserArray[j]].classList.remove('laser')
+  //         // console.log('bomb laser 2')
+  //       }
+  //     }
+  //   }
+  // }
 
   //********************* LEVEL PROGRESSION AND ENDGAMES ***********************
 
@@ -205,6 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function nextLevel() {
     if (alienArray.length === 0) {
       boardReset()
+      alienBombArray = []
+      playerLaserArray = []
       clearInterval(moveCycle)
       display.innerText = `There are ${alienArray.length} aliens remaining and you have ${playerLives} lives left!`
       level += 1
@@ -227,11 +226,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Gives lose conditions and end display on loss
   function endgameLose() {
     for (let i = 0; i < alienArray.length; i++) {
-      if (alienArray[i] > (width*width) - (width*2) || playerLives === 0) {
+      if (alienArray[i] > (width*width) - (width*2) || playerLives <= 0) {
         //THERE'S A GLITCH WHERE IF AN ALIEN HAS SHOTthe shot IT DOESNT DISAPPEAR
         clearInterval(moveCycle)
         if (alienArray[i] > (width*width) - (width*2)) outcome = 'Saving yourself, eh? You survived but the aliens invaded...'
-        if (playerLives === 0) outcome = 'You ran out of lives...'
+        if (playerLives === 0) outcome = 'Out of lives...'
         document.querySelector('.startScreen h1').innerText = `${outcome}`
         document.querySelector('.startScreen h2').innerText = `You scored ${score} - ${endgameComment()}`
         startButton.style.display = 'flex'
@@ -239,6 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startButton.focus() // this doesnt do anything
         alienArray = []
         level = 1
+        score = 0
         gameLoopSpeed = 400
         boardReset()
         startScreen.style.display = 'flex'
@@ -248,10 +248,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function endgameComment() {
-    if (level === 1 || level === 2) return 'Terrible. Humanity\'s doomed.'
+    if (level === 1 || level === 2) return 'You\'re a disgrace to the Human Race'
     if (level === 3 || level === 4) return 'Not bad but the future looks bleak'
     if (level === 5 || level === 6) return 'Good work! You gave those aliens a run for their money'
     if (level === 7 || level === 8) return 'How on earth did you survive so long?!'
+    if (level > 8) return 'Bad luck this game\'s unwinable, or you would\'ve won it!'
   }
 
   //*************************** GAMELOOP, INIT AND DISPLAY *********************
