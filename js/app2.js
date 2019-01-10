@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const laserAudio = document.querySelector('#laserAudio')
   const playerFireAudio = document.querySelector('#playerFireAudio')
   const alienDestroyedAudio = document.querySelector('#alienDestroyedAudio')
+  const cheers = document.querySelector('#cheers')
   const boos = document.querySelector('#boos')
   const aliensInRow = 7
   let playerLaserArray = []
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let score = 0
   let direction = 'right'
   let changeDirection = false
-  let playerLives = 10
+  let playerLives = 3
   let level = 1
   let gameLoopSpeed = 300
   let div
@@ -239,7 +240,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function endgameLose() {
     for (let i = 0; i < alienArray.length; i++) {
       if (alienArray[i] > (width*width) - (width*2) || playerLives <= 0) {
-        //THERE'S A GLITCH WHERE IF AN ALIEN HAS SHOTthe shot IT DOESNT DISAPPEAR
+        if (level <= 3 ) boos.play()
+        if (level > 3) cheers.play()
         clearInterval(moveCycle)
         if (alienArray[i] > (width*width) - (width*2)) outcome = 'Saving yourself, eh? You survived but the aliens invaded...'
         if (playerLives === 0) outcome = 'Out of lives...'
