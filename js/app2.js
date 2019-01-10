@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let outcome
 
 
+
   // ************************ PLAYER MOVEMENT AND ACTION ***********************
 
   // Handles the keys
@@ -131,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const rand = Math.floor((Math.random() * alienArray.length))
     let alienBomb = alienArray[rand]
     const bombInt = setInterval(function() {
-      console.log(alienBombArray)
       checkBombHit()
       alienBomb += width
       if (alienBomb > width*width) {                    // if the bomb goes of the page, remove
@@ -158,15 +158,38 @@ document.addEventListener('DOMContentLoaded', () => {
       if (alienBombArray[i] === playerIndex) {
         div[playerIndex].classList.add('explosive')
         explosion(playerIndex)
+        blink()
+        clearBlink()
         playerLives--
         updateHeading()
         div[playerIndex].classList.remove('bomb')
-        // alienBombArray.splice(i, 1)
         if (playerLives === 0) endgameLose()
         return true
       } else false
     }
   }
+
+
+  function blink() {
+    for (let i = 0; i < width*width; i++) {
+      if (i > (width*width) - 2*width && i < (width*width) - width) div[i].classList.add('blink')
+    }
+  }
+
+  function clearBlink() {
+    let timeRemaining = 2
+    const blinkInt = setInterval(() => {
+      timeRemaining--
+      console.log(timeRemaining)
+      if (timeRemaining === 0) {
+        clearInterval(blinkInt)
+        for (let i = 0; i < width*width; i++) {
+          if (i > (width*width) - 2*width && i < (width*width) - width) div[i].classList.remove('blink')
+        }
+      }
+    }, 1000)
+  }
+
 
   //Checks whether a laser has hit an alien
   function checkAlienLaserCollision() {
@@ -176,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
           alienDestroyedAudio.currentTime = 0
           alienDestroyedAudio.play()
           const collisionIndex = alienArray[i]
-          console.log(collisionIndex)
           div[collisionIndex].classList.add('explosive')
           explosion(collisionIndex)
           score += Math.floor(10 * (level/2))
@@ -254,6 +276,8 @@ document.addEventListener('DOMContentLoaded', () => {
         level = 1
         score = 0
         gameLoopSpeed = 400
+        direction = 'right'
+        changeDirection = false
         boardReset()
         startScreen.style.display = 'flex'
         playerLives = 3
@@ -285,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
     createRow(102)
     moveCycle = setInterval(function() {
       if(changeDirection){          //starts as false so these if options are skipped
-        moveAlien('down')
+        moveAlien('down')           // down doesn't need to be defined in move function- it's not right or left, so defaults
         if(direction ==='left') direction ='right'
         else direction ='left'
         changeDirection = false

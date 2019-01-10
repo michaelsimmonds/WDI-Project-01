@@ -65,7 +65,7 @@ h2 {
 }
 
 .grid {
-  /* border: 1px solid white; */
+  border: 1px solid white;
 }
 
 .grid div {
@@ -201,4 +201,14 @@ h2 {
 .grid div.explosive[data-step="15"] {
   background-position-x: 100%;
   background-position-y: 100%;
+}
+
+.blink {
+  animation: blinker 0.2s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
 }
