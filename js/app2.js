@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const levelArea = document.querySelector('.level')
   const startButton = document.querySelector('.startButton')
   const startScreen = document.querySelector('.startScreen')
+  const laserAudio = document.querySelector('#laserAudio')
+  const playerFireAudio = document.querySelector('#playerFireAudio')
+  const alienDestroyedAudio = document.querySelector('#alienDestroyedAudio')
+  const boos = document.querySelector('#boos')
   const aliensInRow = 7
   let playerLaserArray = []
   let alienBombArray = []
@@ -38,6 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
       movePlayer(playerIndex, prevIndex)
     } else if (e.keyCode === 32) {                                              //Space bar
       shootPlayerLaser(playerIndex)
+      playerFireAudio.currentTime = 0
+      playerFireAudio.play()
     }
   }
   // put shoot as a separate function so you can shoot and move at the same time
@@ -119,6 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //Alien Bomb
   function alienBomb() {
+    laserAudio.currentTime = 0
+    laserAudio.play()
     const rand = Math.floor((Math.random() * alienArray.length))
     let alienBomb = alienArray[rand]
     const bombInt = setInterval(function() {
@@ -164,6 +172,8 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < alienArray.length; i++) {
       for (let j = 0; j < playerLaserArray.length; j++) {
         if (alienArray[i] === playerLaserArray[j]) {
+          alienDestroyedAudio.currentTime = 0
+          alienDestroyedAudio.play()
           const collisionIndex = alienArray[i]
           console.log(collisionIndex)
           div[collisionIndex].classList.add('explosive')
