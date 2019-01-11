@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const laserAudio = document.querySelector('#laserAudio')
   const playerFireAudio = document.querySelector('#playerFireAudio')
   const alienDestroyedAudio = document.querySelector('#alienDestroyedAudio')
+  const groan = document.querySelector('#groan')
   const cheers = document.querySelector('#cheers')
   const boos = document.querySelector('#boos')
   const aliensInRow = 7
@@ -22,13 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let changeDirection = false
   let playerLives = 3
   let level = 1
-  let gameLoopSpeed = 300
+  let gameLoopSpeed = 400
   let div
   let prevIndex
   let playerIndex
   let moveCycle
   let outcome
-
 
 
   // ************************ PLAYER MOVEMENT AND ACTION ***********************
@@ -42,10 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (e.keyCode === 39 && playerIndex < (div.length-width)-1) {        //Right arrow
       playerIndex++
       movePlayer(playerIndex, prevIndex)
-    } else if (e.keyCode === 32) {                                              //Space bar
+    } else if (e.keyCode === 32 && !false) {                                              //Space bar
       shootPlayerLaser(playerIndex)
       playerFireAudio.currentTime = 0
       playerFireAudio.play()
+      return false
     }
   }
   // put shoot as a separate function so you can shoot and move at the same time
@@ -156,26 +157,26 @@ document.addEventListener('DOMContentLoaded', () => {
   function checkBombHit() {
     for (let i = 0; i < alienBombArray.length; i++) {
       if (alienBombArray[i] === playerIndex) {
-        div[playerIndex].classList.add('explosive')
+        groan.currentTime = 0.3
+        groan.play()
         explosion(playerIndex)
         blink()
         clearBlink()
         playerLives--
         updateHeading()
-        div[playerIndex].classList.remove('bomb')
         if (playerLives === 0) endgameLose()
-        return true
-      } else false
+      }
     }
   }
 
-
+  // Sets a blink class on player line. Called when player is shot.
   function blink() {
     for (let i = 0; i < width*width; i++) {
       if (i > (width*width) - 2*width && i < (width*width) - width) div[i].classList.add('blink')
     }
   }
 
+  // Clears the blink after two seconds
   function clearBlink() {
     let timeRemaining = 2
     const blinkInt = setInterval(() => {
@@ -215,10 +216,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //************************** Explosion effect ********************************
 
+  // Sets sprite sheet explosion effect
   let currentStep = 0
-  let explosionId
-
   function explosion(collisionIndex){
+    let explosionId
     if(currentStep === 15){
       currentStep = 0
       div[collisionIndex].classList.remove('explosive')
@@ -227,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else{
       currentStep++
       div[collisionIndex].dataset.explosion = currentStep
-      explosionId = setTimeout(() => explosion(collisionIndex), 10)
+      explosionId = setTimeout(() => explosion(collisionIndex), 2)
     }
   }
 
@@ -242,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clearInterval(moveCycle)
       display.innerText = `There are ${alienArray.length} aliens remaining in this wave and you have ${playerLives} lives left!`
       level += 1
-      if (level < 8) gameLoopSpeed -= 25
+      if (level < 8) gameLoopSpeed -= 40
       startScreen.style.display = 'flex'
       document.querySelector('.startScreen h1').innerText = `Level ${level}`
       document.querySelector('.startScreen h2').innerText = ''

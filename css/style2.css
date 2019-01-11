@@ -66,6 +66,7 @@ h2 {
 
 .grid {
   border: 1px solid white;
+  cursor: none;
 }
 
 .grid div {
