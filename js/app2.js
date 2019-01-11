@@ -42,20 +42,33 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (e.keyCode === 39 && playerIndex < (div.length-width)-1) {        //Right arrow
       playerIndex++
       movePlayer(playerIndex, prevIndex)
-    } else if (e.keyCode === 32 && !false) {                                              //Space bar
-      shootPlayerLaser(playerIndex)
-      playerFireAudio.currentTime = 0
-      playerFireAudio.play()
-      return false
     }
   }
-  // put shoot as a separate function so you can shoot and move at the same time
+
 
   // Handles movement of player. Is called in function to handle keys
   function movePlayer(playerIndex, prevIndex){
     div[playerIndex].classList.add('player')
     div[prevIndex].classList.remove('player')
   }
+
+
+  // Handles the shoot function. Prevents player from holding down shoot.
+  var keydown = false
+  document.addEventListener('keydown', function(e) {
+    if (e.keyCode === 32) {
+      if (!keydown) {
+        keydown = true
+        console.log('key down')
+        shootPlayerLaser(playerIndex)
+        playerFireAudio.currentTime = 0
+        playerFireAudio.play()
+      }
+      document.addEventListener('keyup', function() {
+        keydown = false
+      })
+    }
+  })
 
 
   // *************************** PLAYER LASER *********************************
