@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const cheers = document.querySelector('#cheers')
   const boos = document.querySelector('#boos')
   const aliensInRow = 7
-  let playerLaserArray = []
+  let playerRocketArray = []
   let alienBombArray = []
   let alienArray =  []
   let score = 0
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!keydown) {
         keydown = true
         console.log('key down')
-        shootPlayerLaser(playerIndex)
+        shootplayerRocket(playerIndex)
         playerFireAudio.currentTime = 0
         playerFireAudio.play()
       }
@@ -71,23 +71,23 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 
 
-  // *************************** PLAYER LASER *********************************
+  // *************************** PLAYER rocket *********************************
 
-  // Handles movement of player laser. Is called in function to handle keys
-  function shootPlayerLaser(startPoint) {               //startpoint is retrieved from player pos when spacebar pressed
-    setTimeout(() => laserInterval(startPoint), 50)
+  // Handles movement of player rocket. Is called in function to handle keys
+  function shootplayerRocket(startPoint) {               //startpoint is retrieved from player pos when spacebar pressed
+    setTimeout(() => rocketInterval(startPoint), 50)
   }
 
-  // Player shoots a laser
-  function laserInterval(playerLaser) {
-    playerLaser -= width
-    if (playerLaser <= 0) div[playerLaser+width].classList.remove('laser')
+  // Player shoots a rocket
+  function rocketInterval(playerRocket) {
+    playerRocket -= width
+    if (playerRocket <= 0) div[playerRocket+width].classList.remove('rocket')
     else {
-      playerLaserArray.push(playerLaser)
-      if (playerLaserArray.length > 1) playerLaserArray.splice(playerLaser.length-1, 1)  //removes the previous position of laser in playerLaserArray
-      div[playerLaser].classList.add('laser')
-      div[playerLaser+width].classList.remove('laser')
-      if(!checkAlienLaserCollision()) setTimeout(() => laserInterval(playerLaser), 50)
+      playerRocketArray.push(playerRocket)
+      if (playerRocketArray.length > 1) playerRocketArray.splice(playerRocket.length-1, 1)  //removes the previous position of rocket in playerRocketArray
+      div[playerRocket].classList.add('rocket')
+      div[playerRocket+width].classList.remove('rocket')
+      if(!checkAlienrocketCollision()) setTimeout(() => rocketInterval(playerRocket), 50)
     }
   }
 
@@ -205,11 +205,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  //Checks whether a laser has hit an alien
-  function checkAlienLaserCollision() {
+  //Checks whether a rocket has hit an alien
+  function checkAlienrocketCollision() {
     for (let i = 0; i < alienArray.length; i++) {
-      for (let j = 0; j < playerLaserArray.length; j++) {
-        if (alienArray[i] === playerLaserArray[j]) {
+      for (let j = 0; j < playerRocketArray.length; j++) {
+        if (alienArray[i] === playerRocketArray[j]) {
           alienDestroyedAudio.currentTime = 0
           alienDestroyedAudio.play()
           const collisionIndex = alienArray[i]
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
           explosion(collisionIndex)
           score += Math.floor(10 * (level/2))
           div[collisionIndex].classList.remove('alien')
-          div[collisionIndex].classList.remove('laser')
+          div[collisionIndex].classList.remove('rocket')
           alienArray.splice(i, 1)
           updateHeading()
           return true
@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (alienArray.length === 0) {
       boardReset()
       alienBombArray = []
-      playerLaserArray = []
+      playerRocketArray = []
       clearInterval(moveCycle)
       display.innerText = `There are ${alienArray.length} aliens remaining in this wave and you have ${playerLives} lives left!`
       level += 1
@@ -370,10 +370,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function boardReset() {
     for (let i = 0; i < div.length; i++) {
-      if(div[i].className === 'laser') div[i].classList.remove('laser',)
+      if(div[i].className === 'rocket') div[i].classList.remove('rocket',)
       if(div[i].className === 'alien') div[i].classList.remove('alien')
       if(div[i].className === 'bomb') div[i].classList.remove('bomb')
-      if(div[i].classList.contains('player')) div[i].classList.remove('alien', 'laser', 'player')
+      if(div[i].classList.contains('player')) div[i].classList.remove('alien', 'rocket', 'player')
     }
   }
 
