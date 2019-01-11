@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Clears the blink after two seconds
   function clearBlink() {
-    let timeRemaining = 2
+    let timeRemaining = 1
     const blinkInt = setInterval(() => {
       timeRemaining--
       console.log(timeRemaining)
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
           alienDestroyedAudio.currentTime = 0
           alienDestroyedAudio.play()
           const collisionIndex = alienArray[i]
-          div[collisionIndex].classList.add('explosive')
+          div[collisionIndex].classList.add('explosion')
           explosion(collisionIndex)
           score += Math.floor(10 * (level/2))
           div[collisionIndex].classList.remove('alien')
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let explosionId
     if(currentStep === 15){
       currentStep = 0
-      div[collisionIndex].classList.remove('explosive')
+      div[collisionIndex].classList.remove('explosion')
       clearTimeout(explosionId)
       div[collisionIndex].removeAttribute('data-step')
     } else{
@@ -276,8 +276,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function endgameLose() {
     for (let i = 0; i < alienArray.length; i++) {
       if (alienArray[i] > (width*width) - (width*2) || playerLives <= 0) {
-        if (level <= 3 ) boos.play()
-        if (level > 3) cheers.play()
+        if (level <= 4 ) boos.play()
+        if (level > 4) cheers.play()
         clearInterval(moveCycle)
         if (alienArray[i] > (width*width) - (width*2)) outcome = 'Saving yourself, eh? You survived but the aliens invaded...'
         if (playerLives === 0) outcome = 'Out of lives...'
@@ -285,16 +285,16 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.startScreen h2').innerText = `You scored ${score} - ${endgameComment()}`
         startButton.style.display = 'flex'
         startButton.innerText = 'Play again'
-        startButton.focus() // this doesnt do anything
         alienArray = []
         level = 1
         score = 0
         gameLoopSpeed = 400
+        playerLives = 3
         direction = 'right'
         changeDirection = false
         boardReset()
         startScreen.style.display = 'flex'
-        playerLives = 3
+
       }
     }
   }
@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nextLevel()
         endgameLose()
         for (let i = 0; i < div.length; i++) {
-          if(div[i].classList.contains('explosive')) div[i].classList.remove('explosive')
+          if(div[i].classList.contains('explosion')) div[i].classList.remove('explosion')
         }
       }
     }, gameLoopSpeed)
