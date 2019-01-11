@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const boos = document.querySelector('#boos')
   const aliensInRow = 7
   let playerRocketArray = []
-  let alienBombArray = []
+  let alienLaserArray = []
   let alienArray =  []
   let score = 0
   let direction = 'right'
@@ -131,34 +131,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ****************************** ALIEN BOMB *********************************
+  // ****************************** ALIEN Laser *********************************
 
-  //Runs the alienBomb if the random number is less than the bomb rate
+  //Runs the alienLaser if the random number is less than the Laser rate
   function checkFire() {
     const random = Math.random()
-    if (random < 0.5) alienBomb()
+    if (random < 0.5) alienLaser()
   }
 
-  //Alien Bomb
-  function alienBomb() {
+  //Alien Laser
+  function alienLaser() {
     laserAudio.currentTime = 0
     laserAudio.play()
     const rand = Math.floor((Math.random() * alienArray.length))
-    let alienBomb = alienArray[rand]
-    const bombInt = setInterval(function() {
-      checkBombHit()
-      alienBomb += width
-      if (alienBomb > width*width) {                    // if the bomb goes of the page, remove
-        div[alienBomb-width].classList.remove('bomb')
-        clearInterval(bombInt)
+    let alienLaser = alienArray[rand]
+    const laserInt = setInterval(function() {
+      checkLaserHit()
+      alienLaser += width
+      if (alienLaser > width*width) {                    // if the Laser goes of the page, remove
+        div[alienLaser-width].classList.remove('laser')
+        clearInterval(laserInt)
       } else {
-        alienBombArray.push(alienBomb)
-        if (alienBombArray.length > 1) {                // Do I want this??? need each bomb to have their position
-          alienBombArray.splice(alienBomb.length, 1)  //removes the previous position of bomb bombArray
+        alienLaserArray.push(alienLaser)
+        if (alienLaserArray.length > 1) {                // Do I want this??? need each Laser to have their position
+          alienLaserArray.splice(alienLaser.length, 1)  //removes the previous position of Laser LaserArray
         }
-        if(div[alienBomb]){
-          div[alienBomb].classList.add('bomb')
-          div[alienBomb-width].classList.remove('bomb')
+        if(div[alienLaser]){
+          div[alienLaser].classList.add('laser')
+          div[alienLaser-width].classList.remove('laser')
         }
       }
     }, 79)
@@ -166,10 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // *************************** COLLISION CHECKS ******************************
 
-  // Checks whether a bomb has hit the player
-  function checkBombHit() {
-    for (let i = 0; i < alienBombArray.length; i++) {
-      if (alienBombArray[i] === playerIndex) {
+  // Checks whether a laser has hit the player
+  function checkLaserHit() {
+    for (let i = 0; i < alienLaserArray.length; i++) {
+      if (alienLaserArray[i] === playerIndex) {
         groan.currentTime = 0.3
         groan.play()
         explosion(playerIndex)
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function nextLevel() {
     if (alienArray.length === 0) {
       boardReset()
-      alienBombArray = []
+      alienLaserArray = []
       playerRocketArray = []
       clearInterval(moveCycle)
       display.innerText = `There are ${alienArray.length} aliens remaining in this wave and you have ${playerLives} lives left!`
@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else direction ='left'
         changeDirection = false
       } else {
-        checkFire()                 //initiates alien bomb
+        checkFire()                 //initiates alien Laser
         moveAlien(direction)        //this starts the directions. it is set to 'right' at the top intiially
         alienBoundary()             //this check alien boundaries and see whether to change direction
         nextLevel()
@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < div.length; i++) {
       if(div[i].className === 'rocket') div[i].classList.remove('rocket',)
       if(div[i].className === 'alien') div[i].classList.remove('alien')
-      if(div[i].className === 'bomb') div[i].classList.remove('bomb')
+      if(div[i].className === 'laser') div[i].classList.remove('laser')
       if(div[i].classList.contains('player')) div[i].classList.remove('alien', 'rocket', 'player')
     }
   }

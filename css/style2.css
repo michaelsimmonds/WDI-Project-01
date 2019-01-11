@@ -75,7 +75,7 @@ h2 {
   width: 5%;
 }
 
-.bomb {
+.laser {
   background-image: url('../assets/alienLaser.png');
   background-position: center;
   background-repeat: no-repeat;
