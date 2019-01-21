@@ -45,11 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+
   // Handles movement of player. Is called in function to handle keys
   function movePlayer(playerIndex, prevIndex){
     div[playerIndex].classList.add('player')
     div[prevIndex].classList.remove('player')
   }
+
 
   // Handles the shoot function. Prevents player from holding down shoot.
   var keydown = false
@@ -57,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.keyCode === 32) {
       if (!keydown) {
         keydown = true
-        console.log('key down')
         shootplayerRocket(playerIndex)
         playerFireAudio.currentTime = 0
         playerFireAudio.play()
@@ -202,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000)
   }
 
+
   //Checks whether a rocket has hit an alien
   function checkAlienrocketCollision() {
     for (let i = 0; i < alienArray.length; i++) {
@@ -326,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
         changeDirection = false
       } else {
         checkFire()                 //initiates alien Laser
-        moveAlien(direction)        //this starts the directions. it is set to 'right' at the top intiially
+        moveAlien(direction)        //this starts the directions. direction is set to 'right' at the top intiially
         alienBoundary()             //this check alien boundaries and see whether to change direction
         nextLevel()
         endgameLose()
