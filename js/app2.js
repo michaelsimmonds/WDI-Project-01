@@ -193,7 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let timeRemaining = 1
     const blinkInt = setInterval(() => {
       timeRemaining--
-      console.log(timeRemaining)
       if (timeRemaining === 0) {
         clearInterval(blinkInt)
         for (let i = 0; i < width*width; i++) {
