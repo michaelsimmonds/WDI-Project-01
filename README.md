@@ -1,7 +1,7 @@
 # WDI-Project-01
 JavaScript Game
 
-# General Assembly Project 1 : Simple front-end game
+# Space Invaders
 
 ### Timeframe
 7 days
@@ -12,12 +12,12 @@ JavaScript Game
 * CSS
 * GitHub
 
-### Installation
+### Play the game [here](http://michaelsimmonds.me/WDI-Project-01/)
+
+### or
 
 1. Clone or download the repo
-1. Open the `index.html` in your browser of choice
-
-### My Game - Space Invaders
+2. Open the `index.html` in your browser of choice
 
 ### Game Overview
 Space Invaders is a classic arcade game from the 80s. The player aims to shoot an invading alien armada before it reaches the planet's surface.
