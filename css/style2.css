@@ -10,8 +10,8 @@ body {
   justify-content: center;
   margin: 0;
   font-family: 'lato',sans-serif;
-  background-image: url('https://media.giphy.com/media/DC5oGBcCa81Lg2FaJ2/giphy.gif');
-  background-size: center;
+  background-image: url('../assets/sky-dark.jpg');
+  background-size: cover;
   background-position: center;
 }
 
@@ -59,7 +59,7 @@ h2 {
   text-align: center;
   align-items: center;
   flex-direction: column;
-  background-image: url('https://d2v9y0dukr6mq2.cloudfront.net/video/thumbnail/VOENE67sxikxs86k8/slow-pan-shot-to-earth-from-space-clip-contains-earth-space-florida-bahamas-caribbean-cuba-sun-planet-atmosphere-ocean-images-from-nasa_roeagqdol__F0006.png');
+  background-image: url('../assets/horizon.jpg');
   background-size: cover;
   background-position: center;
 }

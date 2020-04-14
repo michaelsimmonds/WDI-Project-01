@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(laserInt)
       } else {
         alienLaserArray.push(alienLaser)
-        if (alienLaserArray.length > 1) {                // Do I want this??? need each Laser to have their position
+        if (alienLaserArray.length > 1) {
           alienLaserArray.splice(alienLaser.length, 1)  //removes the previous position of Laser LaserArray
         }
         if(div[alienLaser]){
